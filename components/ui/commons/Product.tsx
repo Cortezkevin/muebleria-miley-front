@@ -12,7 +12,7 @@ interface Props {
 
 export const Product: FC<Props> = ({ name, price, image }) => {
   return (
-    <Card shadow="lg" className='w-[300px]'>
+    <Card shadow="lg" className='w-[290px]'>
       <CardBody className="p-0 overflow-visible">
         <Image
           alt={name}

@@ -6,6 +6,7 @@ import { Chip } from '@heroui/chip';
 import { Divider } from '@heroui/divider';
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
+import { CalificationStars } from './CalificationStars';
 
 export const Filter = () => {
 
@@ -65,6 +66,9 @@ export const Filter = () => {
                 <Checkbox value="3">500 - 800</Checkbox>
                 <Checkbox value="4">desde 800</Checkbox>
               </CheckboxGroup>
+            </AccordionItem>
+            <AccordionItem key="4" aria-label="Accordion 4" title="Calificación">
+              <CalificationStars />
             </AccordionItem>
           </Accordion>
         </div>
