@@ -68,7 +68,7 @@ export const Filter = () => {
               </CheckboxGroup>
             </AccordionItem>
             <AccordionItem key="4" aria-label="Accordion 4" title="Calificación">
-              <CalificationStars />
+              <CalificationStars selectable />
             </AccordionItem>
           </Accordion>
         </div>
