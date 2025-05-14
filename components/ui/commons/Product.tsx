@@ -31,10 +31,12 @@ export const Product: FC<Props> = ({ name, price, image, category, discountPerce
           width="100%"
         />
       </CardBody>
-      <CardFooter className='relative p-0'>
-        <div className='flex flex-col w-full gap-2 p-3'>
+      <CardFooter className='relative h-[140px] p-0'>
+        <div className='flex flex-col w-full h-full gap-1 p-3'>
           <p className='uppercase text-default-500'>{category}</p>
-          <p className='text-lg font-semibold'>{name}</p>
+          <div className='flex items-center h-10'>
+            <p className='font-semibold text text-base/5 line-clamp-2'>{ name }</p>
+          </div>
           <div className='flex items-center justify-between w-full'>
             <div className='flex items-center gap-1'> 
               <div className='flex flex-col items-start'>
@@ -63,7 +65,7 @@ export const Product: FC<Props> = ({ name, price, image, category, discountPerce
             }}
             initial={{ y: 100, opacity: 0 }}
             animate={ isHover ? { y: 0, opacity: 1 } : {}}
-            transition={{ duration: .8, type: "spring"}}
+            transition={{ duration: 1, type: "spring"}}
           >
             <div className='flex items-center justify-center w-full h-full gap-2'>
               <Button variant='solid' endContent={<i className="fa-solid fa-eye"></i>}>
