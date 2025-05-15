@@ -1,9 +1,9 @@
 "use client";
 import { testProductData } from '@/utils/data';
-import { Button } from '@heroui/button';
 import { Card } from '@heroui/card'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
 import React from 'react'
+import { AmountCounter } from './AmountCounter';
 
 export const CartItems = () => {
   return (
@@ -20,25 +20,27 @@ export const CartItems = () => {
           { testProductData.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
-                <div className='flex items-center gap-2 w-[300px]'>
+                <div className='flex items-center gap-3 w-[300px]'>
                   <img src={product.image} alt={product.name} className='object-cover w-[120px] h-[90px] rounded-md' />
                   <div className='flex flex-col gap-1'>
                     <span className='text-sm uppercase text-default-500'>{product.category}</span>
                     <h3 className='font-semibold text-md line-clamp-2'>{product.name}</h3>
+                    { product.characteristics && (
+                      product.characteristics.map(c => (
+                        <div key={c.name} className='flex flex-col gap-[1px] text-xs'>
+                          <div className='flex gap-1'>
+                            <span className='text-default-500'>{ c.name }:</span> 
+                            <span className='font-semibold'>{ c.value }</span>
+                          </div>
+                        </div>
+                      ))
+                    ) }
                   </div>
                 </div>
               </TableCell>
               <TableCell>S/ {product.price}</TableCell>
               <TableCell>
-                <div className='flex items-center gap-2'>
-                  <Button size='sm' isIconOnly>
-                    <i className="fa-solid fa-minus"></i>
-                  </Button>
-                  {1}
-                  <Button size='sm' isIconOnly>
-                    <i className="fa-solid fa-plus"></i>
-                  </Button>
-                </div>
+                <AmountCounter initialValue={10}/>
               </TableCell>
               <TableCell>- S/ {100}</TableCell>
               <TableCell>S/ {product.price - 100}</TableCell>

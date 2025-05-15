@@ -36,7 +36,7 @@ export const Filter = () => {
         </div>
         <Divider className='mt-2' />
         <div>
-          <Accordion selectionMode="multiple" variant='splitted'>
+          <Accordion defaultExpandedKeys={["1","2","3","4"]} selectionMode="multiple" variant='splitted'>
             {
               params.get("category") 
               ? !params.get("subcategory") 
