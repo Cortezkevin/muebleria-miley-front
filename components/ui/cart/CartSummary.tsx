@@ -1,16 +1,26 @@
+"use client";
+
 import { Button } from '@heroui/button'
 import { Card } from '@heroui/card'
 import { Divider } from '@heroui/divider'
 import { Input } from '@heroui/input'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 export const CartSummary = () => {
+
+  const router = useRouter();
+
+  const handleContinueOrder = () => {
+    router.push("/cart/checkout/address");
+  }
+
   return (
    <Card className='flex flex-col gap-5 p-4'>
       <h2 className='text-lg font-semibold'>Resumen</h2>
       <div className='flex flex-col gap-2'>
         <span>Dirección de Entrega</span>
-        <form className='flex flex-col gap-1' action="">
+        <form className='flex flex-col gap-2' action="">
           <Input size='sm' label="Dirección" />
           <Button>Seleccionar Dirección</Button>
         </form>
@@ -39,6 +49,8 @@ export const CartSummary = () => {
           <span className='font-[500] text-white'>S/ 2020 </span>
         </div>
       </Card>
+      <Divider/>
+      <Button onPress={handleContinueOrder}>Continuar</Button>
    </Card>
   )
 }

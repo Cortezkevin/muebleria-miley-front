@@ -24,7 +24,7 @@ export const CartItems = () => {
                   <img src={product.image} alt={product.name} className='object-cover w-[120px] h-[90px] rounded-md' />
                   <div className='flex flex-col gap-1'>
                     <span className='text-sm uppercase text-default-500'>{product.category}</span>
-                    <h3 className='font-semibold text-md line-clamp-2'>{product.name}</h3>
+                    <h3 className='font-semibold text-md line-clamp-1'>{product.name}</h3>
                     { product.characteristics && (
                       product.characteristics.map(c => (
                         <div key={c.name} className='flex flex-col gap-[1px] text-xs'>

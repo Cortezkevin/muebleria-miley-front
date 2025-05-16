@@ -15,23 +15,6 @@ const CartPage: NextPage = () => (
     <div className='w-[300px]'>
       <CartSummary />
     </div>
-    {/* <Stepper
-          defaultStep={2}
-          steps={[
-            {
-              title: "Carrito",
-            },
-            {
-              title: "Dirección",
-            },
-            {
-              title: "Pago",
-            },
-            {
-              title: "Confirmación",
-            }
-          ]}
-         /> */}
   </div>
 )
 
