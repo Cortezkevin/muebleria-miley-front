@@ -7,23 +7,29 @@ interface Props {
     image: string;
     price: number;
     name: string;
+    amount: number;
     characteristics?: IProductCharacteristics[];
 }
 
-export const CartItem: FC<Props> = ({ name, price, image, characteristics }) => {
+export const CartItem: FC<Props> = ({ name, price, amount = 1, image, characteristics }) => {
   return (
-    <Card className='w-full flex flex-row gap-2'>
-        <Image width={150} height={90} src={image} alt={name} />
-        <div className='w-full text-sm flex flex-col gap-1'>
-            <span className='line-clamp-1'>{name}</span>
+    <Card className='w-full flex flex-row gap-2' shadow='sm'>
+        <Image width={330} height={120} src={image} alt={name} />
+        <div className='w-full text-sm flex flex-col gap-1 justify-center px-1 py-2'>
+            <span className='font-semibold line-clamp-1'>{name}</span>
             <span>S/ {price}</span>
-            <div className='flex flex-col w-full '>
+            <div className='flex flex-col w-full text-xs'>
                 { characteristics && characteristics.map(c => (
-                    <div className='flex gap-1'>
+                    <div key={c.name} className='flex gap-1'>
                         <span>{c.name}:</span>
                         <span className='font-semibold'>{c.value}</span>
                     </div>
+                    
                 )) }
+                <div className='flex gap-1'>
+                    <span>Cantidad:</span>
+                    <span className='font-semibold'>{amount}</span>
+                </div> 
             </div>
         </div>
     </Card>
