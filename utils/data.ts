@@ -5,7 +5,7 @@ export const testCategoryData = [
   { id: 4, name: 'Comederos', image: 'https://via.placeholder.com/150', description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque, quasi ea minima molestias quos repudiandae aliquid dolore officia placeat fuga provident deserunt, esse aut eos totam quis alias aspernatur magni?' }
 ];
 
-type IProductCharacteristics = {
+export type IProductCharacteristics = {
   name: string;
   value: string;
 }
