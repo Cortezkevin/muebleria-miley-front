@@ -40,7 +40,7 @@ export default function CartCheckoutLayout({
         <div className='w-[1000px]'>
           { children }
         </div>
-        <div className='w-[300px] flex flex-col gap-3'>
+        <div className='w-[400px] flex flex-col gap-3'>
           <div className='flex flex-col w-full text-end'>
             <h3 className='text-xl font-semibold'>Resumen del Pedido</h3>
             <span className='text-sm'><b>2 items</b> en tu carrito</span>

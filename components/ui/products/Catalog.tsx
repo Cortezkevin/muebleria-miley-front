@@ -1,5 +1,4 @@
 "use client";
-import { Card, CardBody } from '@heroui/card'
 import React, { FC } from 'react'
 import { Sorter } from './Sorter'
 import { Product } from '../commons'

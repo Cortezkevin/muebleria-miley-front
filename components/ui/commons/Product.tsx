@@ -1,3 +1,4 @@
+"use client";
 import { Button } from '@heroui/button';
 import { Card, CardBody, CardFooter } from '@heroui/card';
 import { Image } from '@heroui/image';
@@ -5,6 +6,7 @@ import { motion } from 'framer-motion';
 import React, { FC } from 'react'
 import { CalificationStars } from '../products/CalificationStars';
 import { Chip } from '@heroui/chip';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   id: number;
@@ -15,10 +17,15 @@ interface Props {
   discountPercent?: number;
 }
 
-export const Product: FC<Props> = ({ name, price, image, category, discountPercent }) => {
+export const Product: FC<Props> = ({ id, name, price, image, category, discountPercent }) => {
   
   const [isHover, setIsHover] = React.useState(false);
+  const router = useRouter();
   
+  const handleShowDetails = () => {
+    router.push(`/products/${id}`);
+  }
+
   return (
     <Card shadow="lg" className='w-[292px]' onMouseOver={e => setIsHover(true)} onMouseLeave={e => setIsHover(false)}>
       <CardBody className="p-0 overflow-visible">
@@ -68,7 +75,7 @@ export const Product: FC<Props> = ({ name, price, image, category, discountPerce
             transition={{ duration: 1, type: "spring"}}
           >
             <div className='flex items-center justify-center w-full h-full gap-2'>
-              <Button variant='solid' endContent={<i className="fa-solid fa-eye"></i>}>
+              <Button onPress={ handleShowDetails } variant='solid' endContent={<i className="fa-solid fa-eye"></i>}>
                 Ver
               </Button>
               <Button variant='solid' endContent={<i className="fa-solid fa-cart-plus"></i>}>
