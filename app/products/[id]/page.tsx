@@ -19,7 +19,7 @@ const ProductDetailsPage: NextPage<Props> = ({ params }) => {
 
   return (
     <div className='flex flex-col gap-6'>
-        <ProductDetail images={
+        <ProductDetail name='Mueble 1' category='mueble' subCategory='sala' images={
           ["https://media.falabella.com/falabellaCO/20485812_1",
             "https://media.falabella.com/falabellaCO/20485812_2",
             "https://media.falabella.com/falabellaCO/20485812_3",
