@@ -1,9 +1,6 @@
-import { Product } from '@/components/ui';
-import { Coments } from '@/components/ui/products/detail/Coments';
+import { ProductCalification } from '@/components/ui/products/detail/ProductCalification';
 import { ProductDetail } from '@/components/ui/products/detail/ProductDetail';
 import { SimilarOptions } from '@/components/ui/products/detail/SimilarOptions';
-import { testProductData } from '@/utils/data';
-import { Card, CardBody, CardHeader } from '@heroui/card';
 import { NextPage } from 'next'
 import React from 'react'
 
@@ -19,7 +16,7 @@ const ProductDetailsPage: NextPage<Props> = ({ params }) => {
 
   return (
     <div className='flex flex-col gap-6'>
-        <ProductDetail name='Mueble 1' category='mueble' subCategory='sala' images={
+        <ProductDetail stock={10} price={2000} discountPercent={10} name='Mueble 1' category='mueble' subCategory='sala' images={
           ["https://media.falabella.com/falabellaCO/20485812_1",
             "https://media.falabella.com/falabellaCO/20485812_2",
             "https://media.falabella.com/falabellaCO/20485812_3",
@@ -29,7 +26,7 @@ const ProductDetailsPage: NextPage<Props> = ({ params }) => {
             "https://media.falabella.com/falabellaCO/20485812_7"]
         } />
         <SimilarOptions />
-        <Coments />
+        <ProductCalification />
     </div>
   )
 }
