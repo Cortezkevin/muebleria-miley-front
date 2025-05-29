@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import Script from "next/script";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: {
@@ -50,8 +51,8 @@ export default function RootLayout({
             <main className="container flex-grow px-6 py-4 mx-auto max-w-7xl">
               {children}
             </main>
-            <footer className="flex flex-col items-center justify-center py-3 mx-auto mt-20 max-w-7xl">
-              <h1>FOOTER</h1>
+            <footer className="w-full flex flex-col items-center bg-default-100 justify-center py-3 mx-auto mt-40">
+              <Footer /> 
             </footer>
           </div>
         </Providers>

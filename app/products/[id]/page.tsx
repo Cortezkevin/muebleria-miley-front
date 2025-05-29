@@ -11,9 +11,6 @@ interface Props {
 }
 
 const ProductDetailsPage: NextPage<Props> = ({ params }) => {
-
-    console.log(params.id)
-
   return (
     <div className='flex flex-col gap-6'>
         <ProductDetail stock={10} price={2000} discountPercent={10} name='Mueble 1' category='mueble' subCategory='sala' images={

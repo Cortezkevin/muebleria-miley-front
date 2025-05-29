@@ -8,6 +8,7 @@ import { Link } from '@heroui/link';
 import { Divider } from '@heroui/divider';
 import { Chip } from '@heroui/chip';
 import { AmountCounter } from '../../cart/AmountCounter';
+import { Image } from '@heroui/image';
 
 interface Props {
   name: string;
@@ -19,7 +20,21 @@ interface Props {
   discountPercent: number;
 }
 
+const imageColors = [
+  { color: 'Marron', image: 'https://media.falabella.com/falabellaPE/13878759_1/thumbnail' },
+  { color: 'Cafe Claro', image: 'https://media.falabella.com/falabellaPE/13878758_1/thumbnail' },
+  { color: 'Caramelo', image: 'https://media.falabella.com/falabellaPE/13878757_1/thumbnail' },
+  { color: 'Beige', image: 'https://media.falabella.com/falabellaPE/13878773_1/thumbnail' },
+]
+
 export const ProductDetail: FC<Props> = ({name, stock, price, category, subCategory, images, discountPercent }) => {
+
+  const [color, setColor] = React.useState<string>('Beige');
+
+  const handleSelectColor = (selected: string) => {
+    setColor(selected);
+  }
+
   return (
     <Card>
       <CardBody className='flex flex-row gap-5 p-6'>
@@ -50,6 +65,22 @@ export const ProductDetail: FC<Props> = ({name, stock, price, category, subCateg
                 -{discountPercent}%
               </Chip>
               }
+            </div>
+            <div className='w-full'>
+              <span><b>Color: </b>{ color }</span>
+              <div className='flex gap-2 p-2'>
+                {
+                  imageColors.map( ic => (
+                    <div 
+                      onClick={e => handleSelectColor(ic.color)} 
+                      key={ic.color} 
+                      className={`w-[70px] cursor-pointer h-[70px] p-1 rounded-2xl border-2 ${color == ic.color ? 'border-default-800' : 'border-default-100'}`}
+                    >
+                      <Image src={ic.image} />
+                    </div>
+                  ))
+                }
+              </div>
             </div>
             <div className='flex flex-col gap-3'>
               <AmountCounter minValue={1} maxValue={stock} size='lg' />
