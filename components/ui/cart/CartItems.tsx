@@ -4,6 +4,7 @@ import { Card } from '@heroui/card'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@heroui/table'
 import React from 'react'
 import { AmountCounter } from './AmountCounter';
+import { Button } from '@heroui/button';
 
 export const CartItems = () => {
   return (
@@ -15,6 +16,7 @@ export const CartItems = () => {
           <TableColumn>Cantidad</TableColumn>
           <TableColumn>Descuento</TableColumn>
           <TableColumn>Total</TableColumn>
+          <TableColumn>Acciones</TableColumn>
         </TableHeader>
         <TableBody>
           { testProductData.map((product) => (
@@ -44,6 +46,9 @@ export const CartItems = () => {
               </TableCell>
               <TableCell>- S/ {100}</TableCell>
               <TableCell>S/ {product.price - 100}</TableCell>
+              <TableCell>
+                <Button color='danger' isIconOnly><i className="fa-solid fa-trash"></i></Button>
+              </TableCell>
             </TableRow> 
           ))}
         </TableBody>

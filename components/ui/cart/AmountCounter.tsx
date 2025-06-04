@@ -16,7 +16,8 @@ export const AmountCounter: FC<Props> = ({ initialValue = 0, maxValue, minValue 
 
   const handleDecrease = () => {
     const newValue = value - 1;
-    if(newValue >= minValue ){
+    const isNotMin = newValue >= minValue;
+    if( isNotMin ){
       setValue(newValue);
     }
   }
@@ -24,7 +25,8 @@ export const AmountCounter: FC<Props> = ({ initialValue = 0, maxValue, minValue 
   const handleIncrease = () => {
     const newValue = value + 1;
     if( maxValue ){
-      if(newValue <= maxValue ){
+      const isNotMax = newValue <= maxValue;
+      if( isNotMax ){
         setValue(newValue);
       }
     }else {
