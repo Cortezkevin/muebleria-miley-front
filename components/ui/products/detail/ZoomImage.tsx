@@ -43,8 +43,8 @@ const ZoomImage: React.FC<ZoomImageProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg"
-      style={{ width: `${width}px`, height: `${height}px` }}
+      className="relative overflow-hidden rounded-lg w-full h-full"
+      //style={{ width: `${width}px`, height: `${height}px` }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -56,7 +56,7 @@ const ZoomImage: React.FC<ZoomImageProps> = ({
         width={width}
         height={height}
         className="transition-transform duration-200 ease-in-out object-cover"
-        unoptimized // Si usas Next.js y no quieres optimización automática
+        unoptimized
       />
     </div>
   );

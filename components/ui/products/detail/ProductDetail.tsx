@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { ImagesSelector } from "./ImagesSelector";
 import { CalificationStars } from "../CalificationStars";
 import { Button } from "@heroui/button";
@@ -9,6 +9,8 @@ import { Divider } from "@heroui/divider";
 import { Chip } from "@heroui/chip";
 import { AmountCounter } from "../../cart/AmountCounter";
 import { Image } from "@heroui/image";
+import { AuthContext } from '@/context/auth';
+import { CartContext } from '@/context/cart';
 
 type Feature = {
   feature: string;
@@ -17,8 +19,9 @@ type Feature = {
 
 interface Props {
   name: string;
+  id: string;
   images: string[];
-  price: number;
+  price: string;
   stock: number;
   category: string;
   subCategory: string;
@@ -47,6 +50,7 @@ const imageColors = [
 ];
 
 export const ProductDetail: FC<Props> = ({
+  id,
   name,
   stock,
   price,
@@ -59,25 +63,54 @@ export const ProductDetail: FC<Props> = ({
 }) => {
   const [color, setColor] = React.useState<string>("Beige");
 
+  const { isLogged } = React.useContext(AuthContext);
+  const { onAddItem, id: cartId, isAddingItem, onAddMemoryItem } = React.useContext(CartContext);
+  const [amount, setAmount] = useState(1);
+  
   const handleSelectColor = (selected: string) => {
     setColor(selected);
   };
 
+  const handleChangeAmount = (newAmount: number) => {
+    setAmount(newAmount);
+  }
+
+  const handleAddToCart = () => {
+    console.log("Cart id: " + cartId);
+    console.log("ITEM TO ADD: " + id);
+    if (isLogged) {
+        onAddItem({ product_id: id, amount, cart_id: cartId });
+      } else {
+        onAddMemoryItem({
+          id: "",
+          product_id: id,
+          amount,
+          description: description,
+          image: images[0],
+          name: name,
+          category: category,
+          price: price,
+          total: parseFloat(price) * amount + "",
+          stock: stock,
+        });
+      }
+  };
+
   return (
     <Card>
-      <CardBody className="flex flex-col gap-4 p-6">
-        <div className="flex gap-5">
+      <CardBody className="flex flex-col p-6">
+        <div className="flex ">
           <ImagesSelector images={images} />
           <div className="w-full h-[600px] py-4 px-6 flex flex-col gap-3">
             <div className="flex flex-col w-full gap-4">
               <div>
-                <div className="flex gap-3 uppercase text-default-600 font-sm">
+                <div className="flex gap-3 uppercase text-default-600 text-lg">
                   <span>{category}</span>-<span>{subCategory}</span>
                 </div>
-                <h4 className="text-xl font-semibold">{name}</h4>
+                <h4 className="text-4xl font-semibold">{name}</h4>
               </div>
               <div className="flex gap-2">
-                <span>Calificación: </span>
+                <span className="text-lg">Calificación: </span>
                 <CalificationStars stars={5} />
                 <Link
                   underline="always"
@@ -97,7 +130,7 @@ export const ProductDetail: FC<Props> = ({
                   </p>
                   {discountPercent && (
                     <p className="-mt-1 line-through text-md text-default-500">
-                      S/ {price - 100}
+                      S/ {Number.parseFloat(price) - 100}
                     </p>
                   )}
                 </div>
@@ -125,20 +158,32 @@ export const ProductDetail: FC<Props> = ({
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <AmountCounter minValue={1} maxValue={stock} size="lg" />
-                <Button
-                  className="w-[350px] text-lg"
-                  size="lg"
-                  color="primary"
-                  variant="shadow"
-                >
-                  Agregar al Carrito
-                </Button>
+                {
+                  stock
+                  ? (
+                    <>
+                      <AmountCounter onChange={handleChangeAmount} minValue={1} maxValue={stock} size="lg" />
+                      <Button
+                        className="w-[350px] text-lg"
+                        size="lg"
+                        color="primary"
+                        onPress={handleAddToCart}
+                        isLoading={isAddingItem}
+                        variant="shadow"
+                      >
+                        Agregar al Carrito
+                      </Button>
+                  </>
+                  )
+                  : (
+                    <Chip size="lg" color="danger" variant="faded">Producto Agotado</Chip>
+                  )
+                }
               </div>
             </div>
           </div>
         </div>
-        <div className="flex w-full gap-20 px-6">
+        <div className="flex w-full gap-20 -mt-4">
           <div className="flex flex-col w-[60%] gap-4">
             <h5 className="text-lg font-semibold">Descripción</h5>
             <Divider className="h-[2px] mb-4 bg-default-500" />

@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -16,10 +17,29 @@ import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { GithubIcon, Logo } from "@/components/icons";
 import { UserSession } from "./ui/home/UserSession";
-import { Button } from "@heroui/button";
 import { ShoppingCartButton } from "./ui/home/ShoppingCartButton";
+import { useContext } from "react";
+import { CartContext } from "@/context/cart";
+import { Button } from "@heroui/button";
+import { AuthContext } from "@/context/auth";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
+
+  const { isAdmin, isLogged, onLogout, user } = useContext(AuthContext);
+  const { count } = useContext(CartContext);
+  const router = useRouter();
+  
+  const handleAdminAccount = () => {
+    if( isAdmin ){
+      router.push("/admin");
+    }else{
+      router.push("/admin/orders");
+    }
+  };
+
+  console.log("CART COUNT NA", count);
+  
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -53,8 +73,18 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="items-center hidden gap-2 sm:flex">
-          <UserSession isLogged={false} />
-          <ShoppingCartButton />
+          {(isAdmin || user.roles.includes("ROLE_WAREHOUSE") || user.roles.includes("ROLE_TRANSPORT")) && (
+          <Button
+            onClick={handleAdminAccount}
+            color="primary"
+            variant="flat"
+            startContent={<i className="fa-solid fa-user"></i>}
+          >
+            Admin Panel
+          </Button>
+        )}
+          <UserSession isLogged={isLogged} />
+          <ShoppingCartButton cartItemsCount={count}/>
           <ThemeSwitch />
         </NavbarItem>
       </NavbarContent>

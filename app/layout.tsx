@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
@@ -10,6 +9,10 @@ import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import Script from "next/script";
 import { Footer } from "@/components/Footer";
+import AppProviders from "@/context/AppProviders";
+import { Toaster } from "react-hot-toast";
+import { AdminMenu } from "@/components/ui/admin/AdminMenu";
+import { Content } from "@/components/ui/Content";
 
 export const metadata: Metadata = {
   title: {
@@ -46,15 +49,11 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen overflow-auto">
-            <Navbar />
-            <main className="container flex-grow px-6 py-4 mx-auto max-w-7xl">
-              {children}
-            </main>
-            <footer className="w-full flex flex-col items-center bg-default-100 justify-center py-3 mx-auto mt-40">
-              <Footer /> 
-            </footer>
-          </div>
+          <AppProviders>
+          <Content>
+            { children }
+          </Content>
+          </AppProviders>
         </Providers>
         <Script
           src="https://kit.fontawesome.com/40a42e87f5.js"

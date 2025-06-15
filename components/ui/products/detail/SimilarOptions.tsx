@@ -1,10 +1,17 @@
 "use client";
-import { testProductData } from '@/utils/data'
 import { Card, CardHeader, CardBody } from '@heroui/card'
-import React from 'react'
+import React, { FC, useContext } from 'react'
 import { Product } from '../../commons'
+import { ShopContext } from '@/context/shop';
+import { DetailedProductDTO } from '@/types';
 
-export const SimilarOptions = () => {
+interface Props {
+  selfProduct: DetailedProductDTO;
+}
+
+export const SimilarOptions: FC<Props> = ({ selfProduct }) => {
+  const { products } = useContext(ShopContext);
+  console.log("SEIMILAR ", products)
   return (
     <Card className='p-4'>
         <CardHeader>
@@ -12,8 +19,8 @@ export const SimilarOptions = () => {
         </CardHeader>
         <CardBody>
             <div className='flex gap-5'>
-              { testProductData.map( p => (
-                  <Product key={p.id} { ...p } />
+              { products.data.filter(p => p.subcategory === selfProduct.subcategory && p.id !== selfProduct.id).map( p => (
+                  <Product key={p.id} { ...p } image={p.images[0]} />
               )) }
             </div>
         </CardBody>

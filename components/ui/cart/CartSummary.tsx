@@ -1,5 +1,6 @@
 "use client";
 
+import { CartContext } from '@/context/cart';
 import { Button } from '@heroui/button'
 import { Card } from '@heroui/card'
 import { Divider } from '@heroui/divider'
@@ -10,6 +11,7 @@ import React from 'react'
 export const CartSummary = () => {
 
   const router = useRouter();
+  const { shippingCost, count, subtotal, total, tax, discount, items } = React.useContext(CartContext);
 
   const handleContinueOrder = () => {
     router.push("/cart/checkout/address");
@@ -29,24 +31,24 @@ export const CartSummary = () => {
       <Card className='flex flex-col gap-2 p-3 text-sm bg-black/80 dark:bg-black'>
         <div className='flex items-center justify-between'>
           <span className='text-default-300 dark:text-default-400'>Subtotal</span>
-          <span className='text-white/70'>S/ 2000</span>
+          <span className='text-white/70'>S/ {subtotal}</span>
         </div>
         <div className='flex items-center justify-between'>
           <span className='text-default-300 dark:text-default-400'>Delivery</span>
-          <span className='text-white/70'>S/ 100</span>
+          <span className='text-white/70'>S/ {shippingCost}</span>
         </div>
         <div className='flex items-center justify-between'>
           <span className='text-default-300 dark:text-default-400'>IGV (18%)</span>
-          <span className='text-white/70'>S/ 120</span>
+          <span className='text-white/70'>S/ {tax}</span>
         </div>
         <div className='flex items-center justify-between'>
           <span className='text-default-300 dark:text-default-400'>Descuento</span>
-          <span className='text-white/70'>- S/ 200</span>
+          <span className='text-white/70'>- S/ {discount}</span>
         </div>
         <Divider className='bg-default-500'/>
         <div className='flex items-center justify-between text-lg'>
           <span className='text-default-300 dark:text-default-500'>Total</span>
-          <span className='font-[500] text-white'>S/ 2020 </span>
+          <span className='font-[500] text-white'>S/ {total} </span>
         </div>
       </Card>
       <Divider/>

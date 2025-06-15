@@ -36,9 +36,9 @@ export const ImagesSelector: FC<Props> = ({images}) => {
   },[]);
 
   return (
-    <div className='h-[600px] flex flex-col gap-4'>
+    <div className='h-full flex flex-col gap-6'>
       <div>
-        <ZoomImage width={450} height={450} src={imageSelected} />
+        <ZoomImage width={1400} height={1400} src={imageSelected} />
       </div>
       <div className='flex flex-col gap-3 items-center'>
         <div className='flex gap-1'>

@@ -1,11 +1,13 @@
 "use client";
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { Sorter } from './Sorter'
 import { Product } from '../commons'
-import { testProductData } from '@/utils/data';
 import { Filter } from './Filter';
+import { ShopContext } from '@/context/shop';
 
 export const Catalog: FC = () => {
+  const { products } = useContext(ShopContext);
+  
   return (
     <div className='flex w-full gap-4'>
       <div className='w-[400px] h-[800px]'>
@@ -15,8 +17,8 @@ export const Catalog: FC = () => {
         <Sorter />
         <div className='flex flex-wrap gap-4'>
           {
-            testProductData.map((product) => (
-              <Product key={product.id} { ...product } />
+            products.data.map((product) => (
+              <Product key={product.id} { ...product } image={product.images[0]} />
             ))
           }
         </div>

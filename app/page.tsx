@@ -3,6 +3,7 @@ import { OurCategories } from "@/components/ui/home/OurCategories";
 import { SaleSteps } from "@/components/ui/home/SaleSteps";
 
 export default function Home() {
+
   return (
     <div className="flex flex-col gap-6">
       <div className="w-full h-[600px] bg-slate-300">
