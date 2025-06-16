@@ -13,7 +13,7 @@ import {
   ModalFooter,
 } from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
-import { useFormik } from "formik";
+import { useFormik, Field, FormikProvider } from "formik";
 import React, { ChangeEvent } from "react";
 import * as yup from "yup";
 import { StoreContext } from "@/context";
@@ -21,6 +21,9 @@ import { StoreContext } from "@/context";
 import { Tooltip } from "@heroui/tooltip";
 import { CreateProductModal } from "@/types/admin/product";
 import { InputImage } from "../commons/InputImage";
+import { Radio, RadioGroup } from "@heroui/radio";
+import { DefaultImagesSelector } from "./product/DefaultImagesSelector";
+import { ColorImagesSelector } from "./product/ColorImagesSelector";
 
 type Props = {
   handleOpenModal: (isOpen: boolean) => void;
@@ -30,23 +33,45 @@ type Props = {
 type ProductFormInputs = {
   name: string;
   description: string;
-  subCategory: string;
-  //supplier?: string;
+  subcategory: string;
   price: string;
   stock: number;
-  files: File[];
-/*   materials: ProductMaterial[]; */
+  defaultImages: File[];
+  colorImages: { color: string, images: File[]}[];
 };
 
 const schema = yup.object().shape({
   name: yup.string().required("Campo requerido"),
   description: yup.string().required("Campo requerido"),
-  subCategory: yup.string().required("Campo requerido"),
-  /* supplier: yup.string(), */
+  subcategory: yup.string().required("Campo requerido"),
   price: yup.number().required("Campo requerido"),
   stock: yup.number().required("Campo requerido"),
-  files: yup.mixed().required("Campo requerido"),
-});
+  defaultImages: yup.mixed(),
+  colorImages: yup.array().of(
+    yup.object().shape({
+      color: yup.string().required("Color requerido"),
+      images: yup
+        .array()
+        .min(1, "Debe subir al menos una imagen")
+        .required("Debe subir al menos una imagen"),
+    })
+  ),
+}).test(
+  'at-least-one-images-source',
+  'Debes subir imágenes por defecto o por color',
+  function (value) {
+    const { defaultImages, colorImages } = value || {};
+    const hasDefault = defaultImages && defaultImages.length > 0;
+    const hasColor =
+      Array.isArray(colorImages) &&
+      colorImages.length > 0 &&
+      colorImages.some(
+        (ci) => ci.color?.trim() && Array.isArray(ci.images) && ci.images.length > 0
+      );
+
+    return hasDefault || hasColor;
+  }
+);
 
 export function ProductModal({ handleOpenModal, isOpen }: Props) {
   const {
@@ -56,46 +81,27 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
     onSelectProduct,
   } = React.useContext(StoreContext);
 
-  /*const {
-    supplier: { suppliers },
-    rawMaterial: { rawMaterials },
-  } = React.useContext(PurchaseContext);*/
-
   React.useEffect(() => {
     if (!isOpen) {
       onSelectProduct(null);
     }
   }, [isOpen]);
 
-  /* const [materialAmount, setMaterialAmount] = React.useState(1);
-  const [selectedMaterial, setSelectedMaterial] = React.useState<
-    IRawMaterial | undefined
-  >(); */
-  const [disableButton, setDisableButton] = React.useState(true);
+  const [imagesType, setImagesType] = React.useState<'defaultImages' | 'colorImages'>("defaultImages");
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
-  const [files, setFiles] = React.useState<File[]>([]);
 
-  const {
-    handleChange,
-    handleBlur,
-    touched,
-    values,
-    setFieldValue,
-    isValid,
-    resetForm,
-    errors,
-  } = useFormik<ProductFormInputs>({
+  const formik = useFormik<ProductFormInputs>({
     validateOnChange: true,
+    validateOnBlur: false,
     isInitialValid: false,
     initialValues: {
       name: "",
       description: "",
-      subCategory: "",
-      //supplier: undefined,
+      subcategory: "",
       price: "",
       stock: 0,
-     /*  materials: [], */
-      files: [],
+      defaultImages: [],
+      colorImages: []
     },
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -103,39 +109,25 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
     validationSchema: schema,
   });
 
+  console.log("VALUES", formik.values);
+
   React.useEffect(() => {
-    if (selected) {
-      resetForm({
-        values: {
-          name: selected.name,
-          description: selected.description,
-          subCategory: selected.subcategory.id,
-          //supplier: selected.supplierId,
-          price: selected.price,
-          stock: selected.stock,
-          /* materials: selected.materials || [], */
-          files: [],
-        },
-      });
-    }else {
-      resetForm({
-        values: {
-          name: "",
-          description: "",
-          subCategory: "",
-          //supplier: undefined,
-          price: "",
-          stock: 0,
-          /* materials: [], */
-          files: [],
-        }
-      });
-    }
+    formik.resetForm({
+      values: {
+        name: selected ? selected.name : "",
+        description: selected ? selected.description : "",
+        subcategory: selected ? selected.subcategory.id : "",
+        price: selected ? selected.price : "",
+        stock: selected ? selected.stock : 0,
+        defaultImages: [],
+        colorImages: []
+      },
+    });
   }, [selected]);
 
   React.useEffect(() => {
     setIsEditing(selected !== null ? true : false);
-  }, [values]);
+  }, [formik.values]);
 
   const onSubmit = async () => {
     if (selected) {
@@ -162,17 +154,15 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
       onCreateOrEditProduct(
         "Create",
         {
-          name: values.name,
-          subcategory_id: values.subCategory,
-          //supplierId: values.supplier,
-          description: values.description,
-          price: values.price,
-          stock: values.stock,
-          files: values.files,
-          /* materials: values.materials */
+          name: formik.values.name,
+          subcategory_id: formik.values.subcategory,
+          description: formik.values.description,
+          price: formik.values.price,
+          stock: formik.values.stock,
+          files: formik.values.defaultImages,
         } as CreateProductModal,
         () => {
-          resetForm();
+          formik.resetForm();
           handleOpenModal(false);
           onSelectProduct( null );
         }
@@ -181,116 +171,13 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
   };
 
   const handleClose = () => {
-    resetForm();
+    console.log("closemmodal")
+    formik.resetForm();
   };
-
-  /* const handleSelectMaterial = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value !== "") {
-      setSelectedMaterial(rawMaterials.find((p) => p.id === e.target.value));
-    } else {
-      setSelectedMaterial(undefined);
-    }
-  };
-
-  const handleAddMaterial = async () => {
-    if (selectedMaterial) {
-      const actualItems = values.materials;
-      if (actualItems.find((i) => i.materialId === selectedMaterial.id)) {
-        await setFieldValue(
-          "materials",
-          actualItems.map((i) => {
-            if (i.materialId === selectedMaterial.id) {
-              return {
-                ...i,
-                amount: i.amount + materialAmount,
-              };
-            }
-            return i;
-          }),
-          true
-        );
-      } else {
-        await setFieldValue(
-          "materials",
-          [
-            ...(actualItems as any),
-            {
-              materialId: selectedMaterial.id,
-              amount: materialAmount,
-              name: selectedMaterial.name,
-              measurementUnit: selectedMaterial.measurementUnit,
-            },
-          ] as ProductMaterial[],
-          true
-        );
-      }
-      setMaterialAmount(1);
-    }
-  }; */
-
-  /* const handleIncreaseMaterialAmount = () => {
-    setMaterialAmount(materialAmount + 1);
-  };
-
-  const handleDecreaseMaterialAmount = () => {
-    if (materialAmount == 1) {
-      setMaterialAmount(1);
-    } else {
-      setMaterialAmount(materialAmount - 1);
-    }
-  }; */
-
-  /* const handleRemoveItem = (itemId: string) => {
-    setFieldValue(
-      "materials",
-      values.materials.filter((d) => d.materialId !== itemId),
-      true
-    );
-  }; */
-
-  /* const getColumns = () => {
-    return [
-      {
-        id: "name",
-        text: "Nombre",
-        selector: (i: ProductMaterial) => (
-          <div key={i.name + i.materialId}>{i.name}</div>
-        ),
-      },
-      {
-        id: "measurementUnit",
-        text: "Unidad de Medida",
-        selector: (i: ProductMaterial) => (
-          <div key={i.measurementUnit + i.materialId}>{i.measurementUnit}</div>
-        ),
-      },
-      {
-        id: "amount",
-        text: "Cantidad",
-        selector: (i: ProductMaterial) => (
-          <div key={i.amount + i.materialId}>{i.amount}</div>
-        ),
-      },
-      {
-        id: "actions",
-        text: "Acciones",
-        selector: (i: ProductMaterial) => (
-          <Tooltip color="danger" content="Remove" size="sm">
-            <span
-              className="text-lg text-danger cursor-pointer active:opacity-50"
-              onClick={() => handleRemoveItem(i.materialId)}
-            >
-              <i className="fa-solid fa-trash"></i>
-            </span>
-          </Tooltip>
-        ),
-      },
-    ];
-  }; */
 
   return (
+    <FormikProvider value={formik}>
     <Modal
-/*       size={values.supplier ? undefined : "4xl"} */
       isOpen={isOpen}
       onOpenChange={handleOpenModal}
       placement="center"
@@ -309,170 +196,76 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
                 >
                   <Input
                     isRequired
-                    onChange={handleChange("name")}
-                    onBlur={handleBlur("name")}
-                    value={values.name}
+                    onChange={formik.handleChange("name")}
+                    onBlur={formik.handleBlur("name")}
+                    value={formik.values.name}
                     label="Nombre"
-                    isInvalid={!!errors.name && touched.name}
-                    errorMessage={touched.name && errors.name}
+                    isInvalid={!!formik.errors.name && formik.touched.name}
+                    errorMessage={formik.touched.name && formik.errors.name}
                     variant="bordered"
                   />
                   <Textarea
                     isRequired
-                    onChange={handleChange("description")}
-                    onBlur={handleBlur("description")}
-                    value={values.description}
+                    onChange={formik.handleChange("description")}
+                    onBlur={formik.handleBlur("description")}
+                    value={formik.values.description}
                     label="Descripcion"
                     minRows={1}
                     isMultiline
                     placeholder="Describe el Producto..."
-                    isInvalid={!!errors.description && touched.description}
-                    errorMessage={touched.description && errors.description}
+                    isInvalid={!!formik.errors.description && formik.touched.description}
+                    errorMessage={formik.touched.description && formik.errors.description}
                     variant="bordered"
                   />
-                  {/* <Select
-                    items={suppliers}
-                    label="Proveedor"
-                    variant="bordered"
-                    onChange={handleChange("supplier")}
-                    onBlur={handleBlur("supplier")}
-                    value={values.supplier}
-                    isInvalid={!!errors.supplier && touched.supplier}
-                    errorMessage={touched.supplier && errors.supplier}
-                    defaultSelectedKeys={
-                      selected &&
-                      ([
-                        selected.supplierId ? selected.supplierId : undefined,
-                      ] as any)
-                    }
-                    description="Seleecionar si es un producto externo"
-                  >
-                    {(supplier) => (
-                      <SelectItem value={supplier.id} key={supplier.id}>
-                        {supplier.name}
-                      </SelectItem>
-                    )}
-                  </Select> */}
-                  <Select
-                    isRequired
-                    items={subcategories}
-                    label="Sub Categoria"
-                    variant="bordered"
-                    onChange={handleChange("subCategory")}
-                    onBlur={handleBlur("subCategory")}
-                    value={values.subCategory}
-                    isInvalid={!!errors.subCategory && touched.subCategory}
-                    errorMessage={touched.subCategory && errors.subCategory}
-                    defaultSelectedKeys={
-                      selected && ([selected.subcategory.id] as any)
-                    }
-                  >
-                    {(subcategory) => (
-                      <SelectItem /* value={subcategory.id} */ key={subcategory.id}>
-                        {subcategory.name}
-                      </SelectItem>
-                    )}
-                  </Select>
-                  <Input
-                    isRequired
-                    onChange={handleChange("price")}
-                    onBlur={handleBlur("price")}
-                    value={values.price}
-                    label="Precio"
-                    isInvalid={!!errors.price && touched.price}
-                    errorMessage={touched.price && errors.price}
-                    variant="bordered"
-                  />
-                  {/* <Input
-                    isRequired
-                    onChange={handleChange("stock")}
-                    onBlur={handleBlur("stock")}
-                    type="number"
-                    value={values.stock === 0 ? undefined : values.stock + ""}
-                    label="Stock"
-                    isInvalid={!!errors.stock && touched.stock}
-                    errorMessage={touched.stock && errors.stock}
-                    variant="bordered"
-                  /> */}
-                  <InputImage
-                    label="Imagenes"
-                    multiple={true}
-                    accept=".jpg,.png,.webp"
-                    onBlur={handleBlur("file")}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      const fileList = event.currentTarget.files;
-                      if (fileList) {
-                        let filesToSave: File[] = [];
-                        for (let i = 0; i < fileList.length; i++) {
-                          filesToSave.push(fileList[i]);
-                        }
-                        setFieldValue("files", filesToSave);
-                        setFiles(filesToSave);
+                  <div className="flex gap-2">
+                    <Select
+                      isRequired
+                      items={subcategories}
+                      label="Sub Categoria"
+                      variant="bordered"
+                      onChange={formik.handleChange("subcategory")}
+                      onBlur={formik.handleBlur("subcategory")}
+                      value={formik.values.subcategory}
+                      isInvalid={!!formik.errors.subcategory && formik.touched.subcategory}
+                      errorMessage={formik.touched.subcategory && formik.errors.subcategory}
+                      defaultSelectedKeys={
+                        selected && ([selected.subcategory.id] as any)
                       }
-                    }}
-                    isInvalid={!!errors.files && touched.files}
-                    errorMessage={touched.files && errors.files + ""}
-                  />
-                </div>
-                {/* {!values.supplier && (
-                  <div className="flex flex-col gap-3 col-span-3">
-                    <h3 className="font-semibold">Materiales Necesarios</h3>
-                    <div className="flex gap-1 items-center">
-                      <Select
-                        items={rawMaterials}
-                        label="Materiales"
-                        variant="bordered"
-                        size="sm"
-                        onChange={handleSelectMaterial}
-                      >
-                        {(material) => (
-                          <SelectItem value={material.id} key={material.id}>
-                            {material.name}
-                          </SelectItem>
-                        )}
-                      </Select>
-                      <div className="flex items-center">
-                        <div className="border-y-[2px] border-l-[2px] min-w-10 h-12 border-[#e4e5e6] rounded-l-lg shadow-sm flex items-center justify-center max-h-full text-lg font-semibold text-center select-none">
-                          {materialAmount}
-                        </div>
-                        <div className="flex flex-col">
-                          <div
-                            onClick={handleIncreaseMaterialAmount}
-                            className="transition-all duration-200 border-x-[2px] border-t-[2px] border-b-[1px] border-[#e4e5e6] w-6 h-6 flex items-center justify-center text-slate-600 text-sm p-1 cursor-pointer hover:border-[#a0a1ab]"
-                          >
-                            <i className="fa-solid fa-plus"></i>
-                          </div>
-                          <div
-                            onClick={handleDecreaseMaterialAmount}
-                            className="transition-all duration-200 border-x-[2px] border-t-[2px] border-b-[1px] border-[#e4e5e6] w-6 h-6 flex items-center justify-center text-slate-600 text-sm p-1 cursor-pointer hover:border-[#a0a1ab]"
-                          >
-                            <i className="fa-solid fa-minus"></i>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Button
-                        onClick={handleAddMaterial}
-                        size="lg"
-                        color="primary"
-                        className="text-white"
-                        isIconOnly
-                        isDisabled={!selectedMaterial}
-                      >
-                        <i className="fa-solid fa-plus"></i>
-                      </Button>
-                    </div>
-                    <small className="text-gray-400 -mt-2 w-full px-2 text-xs">
-                      Al seleccionar un proveedor el producto se reconoce como
-                      externo y no se debera seleccionar materiales
-                    </small>
-                    <Table
-                      columns={getColumns()}
-                      data={values.materials}
-                      emptyMessage={"No se seleccionaron materiales"}
+                    >
+                      {(subcategory) => (
+                        <SelectItem key={subcategory.id}>
+                          {subcategory.name}
+                        </SelectItem>
+                      )}
+                    </Select>
+                    <Input
+                      isRequired
+                      className="w-[140px]"
+                      onChange={formik.handleChange("price")}
+                      onBlur={formik.handleBlur("price")}
+                      value={formik.values.price}
+                      label="Precio"
+                      isInvalid={!!formik.errors.price && formik.touched.price}
+                      errorMessage={formik.touched.price && formik.errors.price}
+                      variant="bordered"
                     />
                   </div>
-                )} */}
+                  <div className="flex flex-col gap-3">
+                    <RadioGroup size="sm" label="Selecciona el modo de imagenes" value={imagesType} onValueChange={v => {
+                    setImagesType(v as any);
+                    formik.setFieldValue("defaultImages",[]);
+                    formik.setFieldValue("colorImages",[]);
+                    }}>
+                      <Radio value="defaultImages">Imagenes por Defecto</Radio>
+                      <Radio value="colorImages">Imagenes por Color</Radio>
+                    </RadioGroup>
+                    {
+                      imagesType === 'defaultImages'
+                      ? <DefaultImagesSelector name="defaultImages" />
+                      : <ColorImagesSelector name="colorImages" />
+                    }
+                  </div>
+                </div>
               </div>
             </ModalBody>
             <ModalFooter>
@@ -480,7 +273,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
                 color="danger"
                 variant="flat"
                 onPress={() => {
-                  resetForm();
+                  formik.resetForm();
                   onClose();
                 }}
               >
@@ -491,7 +284,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
                 className="text-white"
                 onPress={onSubmit}
                 isDisabled={
-                 !isValid
+                 !formik.isValid /* && (formik.values.defaultImages.length > 0 || formik.values.colorImages.length > 0) */
                 }
                 isLoading={loading}
               >
@@ -502,5 +295,6 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
         )}
       </ModalContent>
     </Modal>
+    </FormikProvider>
   );
 }
