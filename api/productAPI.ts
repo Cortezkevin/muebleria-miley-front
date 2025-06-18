@@ -44,13 +44,23 @@ export const create = async (createProductDTO: CreateProductDTO, images: File[])
   }
   
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH, formData, {
-      "headers": {
-        "Content-Type": "multipart/form-data",
-        "Authorization": "Bearer " + Cookies.get("token")
-      }
-    });
-    return data;
+    if(createProductDTO.colorImages && createProductDTO.colorImages.length > 0){
+      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/color_images", formData, {
+        "headers": {
+          "Content-Type": "multipart/form-data",
+          "Authorization": "Bearer " + Cookies.get("token")
+        }
+      });
+      return data;
+    }else {
+      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/default-images", formData, {
+        "headers": {
+          "Content-Type": "multipart/form-data",
+          "Authorization": "Bearer " + Cookies.get("token")
+        }
+      });
+      return data;
+    }
   }catch(e){
     if(isAxiosError(e)){
       if( e.response?.status === 404){

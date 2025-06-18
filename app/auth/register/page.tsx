@@ -91,7 +91,7 @@ const RegisterPage: NextPage = () => {
     });
 
   return (
-    <div className='flex items-center justify-center h-full'>
+    <div className='flex items-center justify-center h-full mt-6'>
       <Card className='w-[350px] py-2'>
         <CardHeader className='flex flex-col'>
           <h1 className='text-2xl font-semibold text-center'>Crear una Cuenta</h1>

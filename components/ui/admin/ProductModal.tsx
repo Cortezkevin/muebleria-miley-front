@@ -159,7 +159,11 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
           description: formik.values.description,
           price: formik.values.price,
           stock: formik.values.stock,
-          files: formik.values.defaultImages,
+          files: formik.values.colorImages.length > 0
+            ? formik.values.colorImages.reduce((acc: File[], item) => acc.concat(item.images), [])
+            : formik.values.defaultImages,
+          features: [],
+          colorImages: formik.values.colorImages.map(ci => ({color: ci.color, fileNames: ci.images.map(f => f.name)}))
         } as CreateProductModal,
         () => {
           formik.resetForm();

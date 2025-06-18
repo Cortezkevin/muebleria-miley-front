@@ -43,7 +43,7 @@ const ZoomImage: React.FC<ZoomImageProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg w-full h-full"
+      className="relative overflow-hidden rounded-lg w-full h-full max-h-[500px] max-w-[700px]"
       //style={{ width: `${width}px`, height: `${height}px` }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}

@@ -32,8 +32,12 @@ export const ImagesSelector: FC<Props> = ({images}) => {
   }
 
   React.useEffect(() => {
-    calculateImageSectionCount();
-  },[]);
+    if (images && images.length > 0) {
+      calculateImageSectionCount();
+      setImageSelected(images[0]); // Reset a la primera imagen cuando cambian
+      setSectionSelected(1); // Reinicia la sección
+    }
+  }, [images]); 
 
   return (
     <div className='h-full flex flex-col gap-6'>

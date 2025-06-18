@@ -1,3 +1,5 @@
+import { ColorImagesDTO, ProductFeatureDTO } from "../catalog";
+
 export type CreateProductModal = {
   name: string;
   description: string;
@@ -6,6 +8,8 @@ export type CreateProductModal = {
   subcategory_id: string;
   //supplierId?: string;
   files: File[];
+  features: ProductFeatureDTO[];
+  colorImages: ColorImagesDTO[];
   //materials?: ProductMaterial[]
 }
 

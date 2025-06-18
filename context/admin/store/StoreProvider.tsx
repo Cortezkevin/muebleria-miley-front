@@ -285,17 +285,21 @@ export function StoreProvider ({ children }: Props) {
       toast.error(response!.message);*/
     }else {
       product = product as CreateProductModal;
+      console.log("PRODUCT TO CREATE", product)
       const response = await ProductAPI.create(
         {
           name: product.name,
           description: product.description,
           price: product.price,
           stock: product.stock,
+          
           subcategoryId: product.subcategory_id,
+          colorImages: product.colorImages,
+          features: product.features
           /* colorImages: null,
           features: null */
         },
-        product.files!
+        product.files
       );
       if (response?.success) {
         const data = response as SuccessResponseDTO<ProductDTO>;

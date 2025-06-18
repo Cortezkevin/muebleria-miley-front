@@ -17,6 +17,7 @@ interface Props {
 const ProductDetailsPage: NextPage<Props> = ({ params }) => {
   const param = React.use(params as any);
   const [product, setProduct] = React.useState<DetailedProductDTO | undefined>(undefined);
+  const [images, setImages] = React.useState<string[]>([]);
     
   React.useEffect(() => {
     (async () => {
@@ -24,9 +25,19 @@ const ProductDetailsPage: NextPage<Props> = ({ params }) => {
       if (response?.success) {
         const data = response as SuccessResponseDTO<DetailedProductDTO>;
         setProduct(data.content);
+        setImages(
+          data.content.images && data.content.images.length > 0
+                ? data.content.images
+                : data.content.colors[0].images.map(i => i.url)
+        );
       }
     })();
   }, []);
+
+  const handleColorSelected = (color: string) => {
+    const newImages = product?.colors.find(c => c.color === color)?.images.map(i => i.url)!;
+    setImages(newImages);
+  }
 
   return (
     <div className='flex flex-col gap-6'>
@@ -39,13 +50,15 @@ const ProductDetailsPage: NextPage<Props> = ({ params }) => {
               name={product.name}
               category={product.category}
               subCategory={product.subcategory}
+              imageColors={product.colors.map(c => ({ color: c.color, image: c.images[0].url }))}
               images={
-                product.images
+                images
               }
               features={
                 product.features
               }
               description={product.description}
+              onColorSelected={handleColorSelected}
           />
         }
         { 

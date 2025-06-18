@@ -28,26 +28,9 @@ interface Props {
   discountPercent: number;
   description: string;
   features: Feature[];
+  imageColors?: {color: string, image: string}[];
+  onColorSelected: (color: string) => void;
 }
-
-const imageColors = [
-  {
-    color: "Marron",
-    image: "https://media.falabella.com/falabellaPE/13878759_1/thumbnail",
-  },
-  {
-    color: "Cafe Claro",
-    image: "https://media.falabella.com/falabellaPE/13878758_1/thumbnail",
-  },
-  {
-    color: "Caramelo",
-    image: "https://media.falabella.com/falabellaPE/13878757_1/thumbnail",
-  },
-  {
-    color: "Beige",
-    image: "https://media.falabella.com/falabellaPE/13878773_1/thumbnail",
-  },
-];
 
 export const ProductDetail: FC<Props> = ({
   id,
@@ -60,8 +43,10 @@ export const ProductDetail: FC<Props> = ({
   discountPercent,
   description,
   features,
+  onColorSelected,
+  imageColors
 }) => {
-  const [color, setColor] = React.useState<string>("Beige");
+  const [color, setColor] = React.useState<string>(imageColors ? imageColors[0].color : "");
 
   const { isLogged } = React.useContext(AuthContext);
   const { onAddItem, id: cartId, isAddingItem, onAddMemoryItem } = React.useContext(CartContext);
@@ -69,6 +54,7 @@ export const ProductDetail: FC<Props> = ({
   
   const handleSelectColor = (selected: string) => {
     setColor(selected);
+    onColorSelected(selected);
   };
 
   const handleChangeAmount = (newAmount: number) => {
@@ -76,8 +62,6 @@ export const ProductDetail: FC<Props> = ({
   }
 
   const handleAddToCart = () => {
-    console.log("Cart id: " + cartId);
-    console.log("ITEM TO ADD: " + id);
     if (isLogged) {
         onAddItem({ product_id: id, amount, cart_id: cartId });
       } else {
@@ -130,7 +114,7 @@ export const ProductDetail: FC<Props> = ({
                   </p>
                   {discountPercent && (
                     <p className="-mt-1 line-through text-md text-default-500">
-                      S/ {Number.parseFloat(price) - 100}
+                      S/ {Number.parseFloat(price) + 100}
                     </p>
                   )}
                 </div>
@@ -140,23 +124,28 @@ export const ProductDetail: FC<Props> = ({
                   </Chip>
                 )}
               </div>
-              <div className="w-full">
-                <span>
-                  <b>Color: </b>
-                  {color}
-                </span>
-                <div className="flex gap-2 p-2">
-                  {imageColors.map((ic) => (
-                    <div
-                      onClick={(e) => handleSelectColor(ic.color)}
-                      key={ic.color}
-                      className={`w-[70px] cursor-pointer h-[70px] p-1 rounded-2xl border-2 ${color == ic.color ? "border-default-800" : "border-default-100"}`}
-                    >
-                      <Image src={ic.image} />
+              {
+                imageColors
+                && (
+                   <div className="w-full">
+                    <span>
+                      <b>Color: </b>
+                      {color}
+                    </span>
+                    <div className="flex gap-2 p-2">
+                      {imageColors.map((ic) => (
+                        <div
+                          onClick={(e) => handleSelectColor(ic.color)}
+                          key={ic.color}
+                          className={`w-[70px] cursor-pointer h-[70px] p-1 rounded-2xl border-2 ${color == ic.color ? "border-default-800" : "border-default-100"}`}
+                        >
+                          <Image src={ic.image} />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                ) 
+              }
               <div className="flex flex-col gap-3">
                 {
                   stock
