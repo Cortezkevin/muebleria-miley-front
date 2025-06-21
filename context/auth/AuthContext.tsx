@@ -16,8 +16,8 @@ export interface AuthProps {
   onRegister: ( newUser: NewUserDTO ) => Promise<boolean>;
   onChangePassword: ( password: string, confirmPassword: string, token: string ) => Promise<boolean>;
   onLogout: () => void;
-  //onUpdateAddress: ( address: AddressDTO ) => void;
-  //onUpdateAddressMemory: ( address: AddressDTO ) => void;
+  onUpdateAddress: ( address: AddressDTO ) => void;
+  onUpdateAddressMemory: ( address: AddressDTO ) => void;
   //onUpdateProfile: ( profile: UpdateProfileDTO, file?: File ) => Promise<boolean>;
 }
 export const AuthContext = createContext({} as AuthProps);

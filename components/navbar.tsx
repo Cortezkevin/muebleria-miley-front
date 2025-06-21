@@ -41,7 +41,7 @@ export const Navbar = () => {
   console.log("CART COUNT NA", count);
   
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar maxWidth="xl"/*  position="sticky"  */className="z-[50]">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex items-center justify-start gap-1" href="/">
@@ -75,7 +75,7 @@ export const Navbar = () => {
         <NavbarItem className="items-center hidden gap-2 sm:flex">
           {(isAdmin || user.roles.includes("ROLE_WAREHOUSE") || user.roles.includes("ROLE_TRANSPORT")) && (
           <Button
-            onClick={handleAdminAccount}
+            onPress={handleAdminAccount}
             color="primary"
             variant="flat"
             startContent={<i className="fa-solid fa-user"></i>}

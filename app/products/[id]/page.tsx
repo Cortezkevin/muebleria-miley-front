@@ -8,14 +8,12 @@ import { DetailedProductDTO, SuccessResponseDTO } from '@/types';
 import { NextPage } from 'next'
 import React from 'react'
 
-interface Props {
-  params: {
-    id: string;
-  };
+interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
-const ProductDetailsPage: NextPage<Props> = ({ params }) => {
-  const param = React.use(params as any);
+const ProductDetailsPage: NextPage<PageProps> = ({ params }) => {
+  const param = React.use(params);
   const [product, setProduct] = React.useState<DetailedProductDTO | undefined>(undefined);
   const [images, setImages] = React.useState<string[]>([]);
     
@@ -50,7 +48,7 @@ const ProductDetailsPage: NextPage<Props> = ({ params }) => {
               name={product.name}
               category={product.category}
               subCategory={product.subcategory}
-              imageColors={product.colors.map(c => ({ color: c.color, image: c.images[0].url }))}
+              imageColors={product.colors.length > 0 ? product.colors.map(c => ({ color: c.color, image: c.images[0].url })) : undefined}
               images={
                 images
               }

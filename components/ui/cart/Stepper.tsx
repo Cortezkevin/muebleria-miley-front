@@ -6,7 +6,7 @@ import type {ButtonProps} from "@heroui/button";
 import React from "react";
 import {useControlledState} from "@react-stately/utils";
 import {m, LazyMotion, domAnimation} from "framer-motion";
-//import {cn} from "@heroui";
+//import {scn} from "@heroui";
 import clsx from "clsx";
 
 export type RowStepProps = {
@@ -173,7 +173,7 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
                 >
                   <div className="h-ful relative flex items-center">
                     <LazyMotion features={domAnimation}>
-                      <m.div animate={status} className="relative">
+                      <m.div animate={status} style={{ position: "relative"}}>
                         <m.div
                           className={clsx(
                             "relative flex h-[34px] w-[34px] items-center justify-center rounded-full border-medium text-large font-semibold text-default-foreground",

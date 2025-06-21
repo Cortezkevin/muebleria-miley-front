@@ -19,7 +19,7 @@ export const SimilarOptions: FC<Props> = ({ selfProduct }) => {
         </CardHeader>
         <CardBody>
             <div className='flex gap-5'>
-              { products.data.filter(p => p.subcategory === selfProduct.subcategory && p.id !== selfProduct.id).map( p => (
+              { products.data.filter(p => p.subcategory.name === selfProduct.subcategory && p.id !== selfProduct.id).map( p => (
                   <Product key={p.id} { ...p } image={p.images[0]} />
               )) }
             </div>

@@ -14,7 +14,8 @@ export const ImagesSelector: FC<Props> = ({images}) => {
 
   const calculateImageSectionCount = () => {
     let sections = Math.round(images.length / 5);
-    if(((sections - images.length / 5) < 5) && images.length % 5 > 0){
+    /*condicion agregada -> sections > 5 && */
+    if(sections > 5 && ((sections - images.length / 5) < 5) && images.length % 5 > 0){
       sections += 1;
     }
 

@@ -39,10 +39,7 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
         ...state,
         user: {
           ...state.user,
-          roleExtraData: state.user.roleExtraData && {
-            //...state.user.roleExtraData,
-            status: "DISPONIBLE"
-          }
+          roleExtraData: state.user.roleExtraData && undefined
         }
       }
     case '[Auth] - Login':

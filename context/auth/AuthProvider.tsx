@@ -99,13 +99,13 @@ export default function AuthProvider({ children }: Props) {
       return false;
     }
   };
-/*
+
   const handleUpdateAddress = async ( address: AddressDTO ) => {
     dispatch({
       type: "[Auth] - Saving Address",
       payload: true
     })
-    const data = await addressAPI.update(address);
+    /*const data = await addressAPI.update(address);
     if( data?.success ){
       dispatch({
         type: "[Auth] - Update Address",
@@ -118,8 +118,8 @@ export default function AuthProvider({ children }: Props) {
         type: "[Auth] - Saving Address",
         payload: false
       })
-    }
-  }*/
+    }*/
+  }
   
   const validateSession = async () => {
     const data = await validateToken(Cookies.get("token") || '');
@@ -255,6 +255,8 @@ export default function AuthProvider({ children }: Props) {
         onLogout: handleLogout,
         onRegister: handleRegister,
         onChangePassword: handleChangePassword,
+        onUpdateAddress: handleUpdateAddress,
+        onUpdateAddressMemory: handleUpdateAddressMemory,
         isLoadingUserData,
       }}
     >

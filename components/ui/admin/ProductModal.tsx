@@ -13,17 +13,16 @@ import {
   ModalFooter,
 } from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
-import { useFormik, Field, FormikProvider } from "formik";
-import React, { ChangeEvent } from "react";
+import { useFormik, FormikProvider } from "formik";
+import React from "react";
 import * as yup from "yup";
 import { StoreContext } from "@/context";
 //import { PurchaseContext } from "@/context/admin/purchase";
-import { Tooltip } from "@heroui/tooltip";
 import { CreateProductModal } from "@/types/admin/product";
-import { InputImage } from "../commons/InputImage";
 import { Radio, RadioGroup } from "@heroui/radio";
 import { DefaultImagesSelector } from "./product/DefaultImagesSelector";
 import { ColorImagesSelector } from "./product/ColorImagesSelector";
+import { FaetureSelector } from "./product/FaetureSelector";
 
 type Props = {
   handleOpenModal: (isOpen: boolean) => void;
@@ -36,6 +35,7 @@ type ProductFormInputs = {
   subcategory: string;
   price: string;
   stock: number;
+  features: { feature: string, value: string}[];
   defaultImages: File[];
   colorImages: { color: string, images: File[]}[];
 };
@@ -47,6 +47,12 @@ const schema = yup.object().shape({
   price: yup.number().required("Campo requerido"),
   stock: yup.number().required("Campo requerido"),
   defaultImages: yup.mixed(),
+  features: yup.array().of(
+    yup.object().shape({
+      feature: yup.string().required("Nombre requerido"),
+      value: yup.string().required("Valor requerido")
+    })
+  ),
   colorImages: yup.array().of(
     yup.object().shape({
       color: yup.string().required("Color requerido"),
@@ -100,6 +106,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
       subcategory: "",
       price: "",
       stock: 0,
+      features: [],
       defaultImages: [],
       colorImages: []
     },
@@ -109,8 +116,6 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
     validationSchema: schema,
   });
 
-  console.log("VALUES", formik.values);
-
   React.useEffect(() => {
     formik.resetForm({
       values: {
@@ -119,6 +124,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
         subcategory: selected ? selected.subcategory.id : "",
         price: selected ? selected.price : "",
         stock: selected ? selected.stock : 0,
+        features: [],
         defaultImages: [],
         colorImages: []
       },
@@ -162,7 +168,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
           files: formik.values.colorImages.length > 0
             ? formik.values.colorImages.reduce((acc: File[], item) => acc.concat(item.images), [])
             : formik.values.defaultImages,
-          features: [],
+          features: formik.values.features,
           colorImages: formik.values.colorImages.map(ci => ({color: ci.color, fileNames: ci.images.map(f => f.name)}))
         } as CreateProductModal,
         () => {
@@ -175,7 +181,6 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
   };
 
   const handleClose = () => {
-    console.log("closemmodal")
     formik.resetForm();
   };
 
@@ -191,7 +196,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Crear Productos
+              { isEditing ? "Editar Producto" : "Crear Productos" } 
             </ModalHeader>
             <ModalBody>
               <div className="grid grid-cols-5 gap-4">
@@ -214,9 +219,8 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
                     onBlur={formik.handleBlur("description")}
                     value={formik.values.description}
                     label="Descripcion"
-                    minRows={1}
+                    minRows={0}
                     isMultiline
-                    placeholder="Describe el Producto..."
                     isInvalid={!!formik.errors.description && formik.touched.description}
                     errorMessage={formik.touched.description && formik.errors.description}
                     variant="bordered"
@@ -254,6 +258,7 @@ export function ProductModal({ handleOpenModal, isOpen }: Props) {
                       variant="bordered"
                     />
                   </div>
+                  <FaetureSelector name="features"/>
                   <div className="flex flex-col gap-3">
                     <RadioGroup size="sm" label="Selecciona el modo de imagenes" value={imagesType} onValueChange={v => {
                     setImagesType(v as any);

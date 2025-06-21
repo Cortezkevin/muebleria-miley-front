@@ -6,12 +6,15 @@ import { Card } from '@heroui/card'
 import { Divider } from '@heroui/divider'
 import { Input } from '@heroui/input'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
+import { AddressModal } from './AddressModal';
 
 export const CartSummary = () => {
 
   const router = useRouter();
   const { shippingCost, count, subtotal, total, tax, discount, items } = React.useContext(CartContext);
+
+  const [openModal, setOpenModal] = useState(false);
 
   const handleContinueOrder = () => {
     router.push("/cart/checkout/address");
@@ -24,7 +27,7 @@ export const CartSummary = () => {
         <span>Dirección de Entrega</span>
         <form className='flex flex-col gap-2' action="">
           <Input size='sm' label="Dirección" />
-          <Button>Seleccionar Dirección</Button>
+          <Button onPress={() => setOpenModal(true)}>Seleccionar Dirección</Button>
         </form>
       </div>
       <Divider />
@@ -51,6 +54,7 @@ export const CartSummary = () => {
           <span className='font-[500] text-white'>S/ {total} </span>
         </div>
       </Card>
+      <AddressModal isOpen={ openModal } handleOpenModal={(isOpen) => setOpenModal(isOpen)} />
       <Divider/>
       <Button onPress={handleContinueOrder}>Continuar</Button>
    </Card>

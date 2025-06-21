@@ -35,21 +35,23 @@ export const InputImage: FC<Props> = ({ errorMessage, isInvalid, label, multiple
   return (
     <div className="flex flex-col gap-[1px] relative text-default-600">
       {/* Label flotante */}
-      <p className={`text-xs absolute left-3 top-2 ${isInvalid ? 'text-[#f31361]' : ''}`}>
-        {label}
-      </p>
+      {
+        sizeInput !== "sm" && <p className={`text-xs absolute left-3 top-2 ${isInvalid ? 'text-[#f31361]' : ''}`}>
+          {label}
+        </p>
+      }
 
       {/* Contenedor con borde */}
       <div
         style={ props.style }
-        className={`rounded-xl border-2 ${sizeInput === "sm" ? "text-xs" : "text-md"} p-2 pt-6 cursor-pointer transition-all duration-150 ${
+        className={`rounded-xl border-2 ${sizeInput === "sm" ? "text-xs py-2" : "text-md pt-6"} p-2 cursor-pointer transition-all duration-150 ${
           isInvalid
             ? 'border-[#f31361] text-[#f31361]'
             : 'border-default-200 hover:border-default-400 focus-within:border-black'
         }`}
         onClick={handleClick}
       >
-        <Button size={sizeInput} className={`text-left w-full ${sizeInput === "sm" ? "h-[22px]" : "h-8"}`} onPress={handleClick}>
+        <Button size={sizeInput} className={`text-left w-full ${sizeInput === "sm" ? "h-[30px]" : "h-8"}`} onPress={handleClick}>
           {selectedLabel}
         </Button>
       </div>

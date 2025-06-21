@@ -106,7 +106,7 @@ export const Product: FC<Props> = ({ id, name, price, image, category, stock, di
                 Ver
               </Button>
               {
-                stock && (
+                stock > 0 && (
                   <Button onPress={handleAddItemToCart} variant='solid' endContent={<i className="fa-solid fa-cart-plus"></i>}>
                     Add to Cart
                   </Button>

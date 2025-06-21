@@ -44,6 +44,7 @@ export const ColorImagesSelector: React.FC<Props> = ({ name }) => {
                     className='w-[80px] text-xs'
                     label="Color"
                     variant='bordered'
+                    size='sm'
                     value={ci.color}
                     errorMessage={showErrorColor ? String(errorColor) : undefined}
                     isInvalid={showErrorColor}

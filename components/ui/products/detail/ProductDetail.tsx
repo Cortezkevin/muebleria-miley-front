@@ -172,7 +172,7 @@ export const ProductDetail: FC<Props> = ({
             </div>
           </div>
         </div>
-        <div className="flex w-full gap-20 -mt-4">
+        <div className="flex w-full gap-20 mt-4">
           <div className="flex flex-col w-[60%] gap-4">
             <h5 className="text-lg font-semibold">Descripción</h5>
             <Divider className="h-[2px] mb-4 bg-default-500" />
@@ -183,7 +183,7 @@ export const ProductDetail: FC<Props> = ({
             <Divider className="h-[2px] mb-4 bg-default-500" />
             <div className="flex flex-col items-center w-full gap-4">
               {features.map((feature, index) => ( 
-                <div key={index} className="flex justify-center w-full gap-2">
+                <div key={index} className="px-12 flex justify-between w-full gap-2">
                   <span className="font-semibold w-[40%]">{feature.feature}:</span>
                   <span>{feature.value}</span>
                 </div>
