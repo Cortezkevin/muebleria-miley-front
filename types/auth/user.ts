@@ -2,6 +2,8 @@ import { CarrierDTO } from "../delivery/carrier";
 import { GrocerDTO } from "../warehouse/grocer";
 import { ProfileDTO } from "./profile";
 
+export type Status = "ACTIVO" | "INACTIVO";
+
 export type UserDTO = {
     id: string;
     firstName: string;
@@ -10,6 +12,6 @@ export type UserDTO = {
     roles: string[];
     profile: ProfileDTO;
     photoUrl: string;
-    status: 'ACTIVO' | 'INACTIVO';
+    status: Status;
     roleExtraData?: GrocerDTO | CarrierDTO | null;
 }

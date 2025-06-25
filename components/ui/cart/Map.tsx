@@ -1,7 +1,6 @@
 import { AuthContext } from '@/context/auth';
 import { AddressDTO } from '@/types';
 import { Loader } from '@googlemaps/js-api-loader';
-import { Button } from '@heroui/button';
 import { Input } from '@heroui/input';
 import React, { FC } from 'react'
 import toast from 'react-hot-toast';
@@ -9,8 +8,7 @@ import Cookies from 'js-cookie'
 
 const loader = new Loader({
   apiKey: "AIzaSyCFgCKva937BK3IEE4y-jWGhvXh5DNaRIg",
-  version: "weekly",
-  //libraries: ["places"]
+  version: "weekly"
 });
 
 let map: google.maps.Map;
@@ -30,8 +28,6 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   const inputSearchRef = React.useRef<HTMLInputElement>(null);
-  const buttonSearchRef = React.useRef<HTMLButtonElement>(null);
-  const [addressSearch, setAddressSearch] = React.useState("");
 
   const [origin] = React.useState<{ lat: number, lng: number }>({ lat: -12.190860, lng: -76.994641 });
   const [destination, setDestination] = React.useState<{ lat: number, lng: number }>(initDestination );
@@ -102,96 +98,26 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
         console.log("Could not display directions due to: " + e);
       });
   }
-  
-  function geocode(request: google.maps.GeocoderRequest): void {
-    geocoder
-      .geocode(request)
-      .then((result) => {
-        const { results } = result;
-        map.setCenter(results[0].geometry.location);
-
-        clearSelectedDirection();
-        results[0].address_components.forEach( ac => {
-          ac.types.forEach(t => {
-            if(t === "locality"){
-              setSelectedLocality(p => ac.short_name );
-            }
-            if(t === "route"){
-              setSelectedCalle(p => ac.short_name );
-            }
-            if(t === "sublocality"){
-              setSelectedUrbanizacion( ac.short_name );
-            }
-            if(t === "administrative_area_level_2"){
-              setSelectedProvincia( ac.short_name );
-            }
-            if(t === "administrative_area_level_1"){
-              setSelectedDepartamento( ac.short_name );
-            }
-            if(t === "postal_code"){
-              setSelectedPostalCode( ac.short_name );
-            }
-          })
-          setDestination({
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng()
-          })
-        })
-
-        return results;
-      })
-      .catch((e) => {
-        toast.error("No se encontro esa direccion, por favor especifique mas");
-      });
-  }
-  
-  const clearSelectedDirection = () => {
-    setSelectedCalle("");
-    setSelectedDepartamento("");
-    setSelectedLocality("");
-    setSelectedUrbanizacion("");
-    setSelectedPostalCode("");
-    setSelectedProvincia("");
-  }
 
   React.useEffect(() => {
+    console.log(selectedLocality, selectedDepartamento, selectedCalle, selectedPostalCode, selectedProvincia, selectedUrbanizacion, distance)
     const selectedAddress = (selectedProvincia + (selectedLocality !== "" ? (", "+selectedLocality) : "")) + (selectedUrbanizacion !== "" ? (", "+selectedUrbanizacion) : "")  +  ( selectedCalle !== "" ? (", " + selectedCalle) : "" ); 
-    if( user.profile.address ){
-      onSelectDirection({
-        address: {
-          id: user.profile.address.id,
-          department: selectedDepartamento,
-          district: selectedLocality,
-          lng: destination.lng,
-          lta: destination.lat,
-          postalCode: parseInt(selectedPostalCode),
-          province: selectedProvincia,
-          street: selectedCalle,
-          urbanization: selectedUrbanizacion,
-          fullAddress: selectedAddress
-        },
-        distance: distance?.value ? distance.value : 0.0,
-        distanceCost: distance?.value ? (distance?.value * 2).toFixed(2) : ""
-      });
-      setAddressSearch( user.profile.address.fullAddress );
-    }else {
-      onSelectDirection({
-        address: {
-          id: "",
-          department: selectedDepartamento,
-          district: selectedLocality,
-          lng: destination.lng,
-          lta: destination.lat,
-          postalCode: parseInt(selectedPostalCode),
-          province: selectedProvincia,
-          street: selectedCalle,
-          urbanization: selectedUrbanizacion,
-          fullAddress: selectedAddress
-        },
-        distance: distance?.value ? distance.value : 0.0,
-        distanceCost: distance?.value ? (distance?.value * 2).toFixed(2) : ""
-      });
-    }
+    onSelectDirection({
+      address: {
+        id: user.profile.address ? user.profile.address.id : "",
+        department: selectedDepartamento,
+        district: selectedLocality,
+        lng: destination.lng,
+        lta: destination.lat,
+        postalCode: parseInt(selectedPostalCode),
+        province: selectedProvincia,
+        street: selectedCalle,
+        urbanization: selectedUrbanizacion,
+        fullAddress: selectedAddress
+      },
+      distance: distance?.value ? distance.value : 0.0,
+      distanceCost: distance?.value ? (distance?.value * 2).toFixed(2) : ""
+    });
   }, [selectedLocality, selectedDepartamento, selectedCalle, selectedPostalCode, selectedProvincia, selectedUrbanizacion, distance])
 
   React.useEffect(() => {
@@ -318,33 +244,29 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
 
   return (
     <div className='flex flex-col gap-2'>
-     {/*  <div className='w-full flex gap-2 items-center'>
-        <Input size='sm' value={ addressSearch } onChange={(e) => setAddressSearch(e.target.value)}  label="Direccion" placeholder='Ingrese el nombre de la direccion' />
-        <Button color='primary' className='text-white' size='md' onClick={() => geocode({ address: addressSearch })} ref={buttonSearchRef}>Buscar</Button>
-      </div> */}
       <div id='map' className="h-[350px]" ref={mapRef}></div>
       <div className='flex flex-col gap-2'>
         <h2 className='font-semibold'>Dirección Seleccionada</h2>
         <div className='flex flex-col gap-2'>
           <div className='flex gap-2'>
-            <Input readOnly value={ selectedDepartamento } size='sm' label="Departamento" />
-            <Input readOnly value={ selectedProvincia } size='sm' label="Provincia" />
+            <Input disabled value={ selectedDepartamento } size='sm' label="Departamento" />
+            <Input disabled value={ selectedProvincia } size='sm' label="Provincia" />
           </div>
           <div className='flex gap-2'>
-            <Input readOnly value={ selectedLocality } size='sm' label="Distrito" />
-            <Input readOnly value={ selectedUrbanizacion } size='sm' label="Urbanizacion" />
+            <Input disabled value={ selectedLocality } size='sm' label="Distrito" />
+            <Input disabled value={ selectedUrbanizacion } size='sm' label="Urbanizacion" />
           </div>
           <div className='flex gap-2'>
-            <Input readOnly value={ selectedPostalCode } size='sm' label="Codigo Postal" />
-            <Input readOnly value={ selectedCalle } size='sm' label="Calle" />
+            <Input disabled value={ selectedPostalCode } size='sm' label="Codigo Postal" />
+            <Input disabled value={ selectedCalle } size='sm' label="Calle" />
           </div>
         </div>
       </div>
       <div className='flex flex-col gap-4'>
         <h2 className='font-semibold'>Distancia y Calculo de Precio</h2>
         <div className='flex gap-2'>
-          <Input readOnly value={ distance?.text || "" } size='sm' label="Distancia" />
-          <Input readOnly value={ distance?.value ? "S/. " + (distance?.value * 2).toFixed(2) : "" } size='sm' label="Costo de envio"/>
+          <Input disabled value={ distance?.text || "" } size='sm' label="Distancia" />
+          <Input disabled value={ distance?.value ? "S/. " + (distance?.value * 2).toFixed(2) : "" } size='sm' label="Costo de envio"/>
         </div>
       </div>
     </div>

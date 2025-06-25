@@ -2,9 +2,11 @@ import {
   CategoryDTO,
   ProductDTO,
   SubCategoryDTO,
+  UserDTO,
   //IUser,
 } from "@/types";
 import { StoreState } from ".";
+import { IUsersTableCell } from "@/app/admin/users/page";
 //import { IUsersTableCell } from "@/declarations/table/users";
 
 type StoreAction =
@@ -69,25 +71,25 @@ type StoreAction =
       type: "[Store] - Select Product";
       payload: ProductDTO | null;
     }
-  /*| {
+  | {
       type: "[Store] - Load Users";
-      payload: IUser[];
+      payload: UserDTO[];
     }
   | {
       type: "[Store] - Saving User";
     }
   | {
       type: "[Store] - User Updated";
-      payload: IUser;
+      payload: UserDTO;
     }
   | {
       type: "[Store] - User Created";
-      payload: IUser;
+      payload: UserDTO;
     }
   | {
       type: "[Store] - Select User";
       payload: IUsersTableCell | null;
-    }*/;
+    };
 
 export const StoreReducer = (
   state: StoreState,
@@ -146,53 +148,6 @@ export const StoreReducer = (
           loading: false,
         },
       };
-    /*case "[Store] - Load Collections":
-      return {
-        ...state,
-        collection: {
-          ...state.collection,
-          collections: action.payload,
-        },
-      };
-    case "[Store] - Select Collection":
-      return {
-        ...state,
-        collection: {
-          ...state.collection,
-          selected: action.payload,
-        },
-      };
-    case "[Store] - Saving Collection":
-      return {
-        ...state,
-        collection: {
-          ...state.collection,
-          loading: true,
-        },
-      };
-    case "[Store] - Collection Updated":
-      return {
-        ...state,
-        collection: {
-          collections: state.collection.collections.map((c: ICollection) => {
-            if (c.id === action.payload.id) {
-              return action.payload;
-            }
-            return c;
-          }),
-          selected: null,
-          loading: false,
-        },
-      };
-    case "[Store] - Collection Created":
-      return {
-        ...state,
-        collection: {
-          collections: [...state.collection.collections, action.payload],
-          selected: null,
-          loading: false,
-        },
-      };*/
     case "[Store] - Load SubCategories":
       return {
         ...state,
@@ -292,7 +247,7 @@ export const StoreReducer = (
         ...state,
         loadingData: action.payload,
       };
-    /*case "[Store] - Load Users":
+    case "[Store] - Load Users":
       return {
         ...state,
         user: {
@@ -306,7 +261,7 @@ export const StoreReducer = (
         user: {
           ...state.user,
           selected:
-            state.user.users.find((u: IUser) => u.id === action.payload?.id) || null,
+            state.user.users.find((u: UserDTO) => u.id === action.payload?.id) || null,
         },
       };
     case "[Store] - Saving User":
@@ -321,7 +276,7 @@ export const StoreReducer = (
       return {
         ...state,
         user: {
-          users: state.user.users.map((u: IUser) => {
+          users: state.user.users.map((u: UserDTO) => {
             if (u.id === action.payload.id) {
               return action.payload;
             }
@@ -339,7 +294,7 @@ export const StoreReducer = (
           selected: null,
           loading: false,
         },
-      };*/
+      };
     default:
       return state;
   }

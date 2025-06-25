@@ -5,7 +5,7 @@ import React, { FC } from 'react'
 
 interface Props {
     image: string;
-    price: number;
+    price: string;
     name: string;
     amount: number;
     characteristics?: IProductCharacteristics[];

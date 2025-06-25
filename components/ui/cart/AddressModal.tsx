@@ -40,7 +40,7 @@ export const AddressModal: FC<Props> = ({ isOpen, handleOpenModal }) => {
   const handleSaveAddress = () => {
     if( isLogged ){
       onUpdateAddress( addressSelected.address );
-      onChangeShippingCost(  addressSelected.distanceCost, addressSelected.distance );
+      onChangeShippingCost( addressSelected.distanceCost, addressSelected.distance );
     }else {
       onUpdateAddressMemory( addressSelected.address );
       onChangeShippingCostMemory(  addressSelected.distanceCost );
@@ -67,7 +67,7 @@ export const AddressModal: FC<Props> = ({ isOpen, handleOpenModal }) => {
             </ModalHeader>
             <ModalBody>
               <Map onSelectDirection={a => {
-                setAddressSelected(a)
+                setAddressSelected({ address: a.address, distance: a.distance, distanceCost: a.distanceCost })
               }}  initDestination={ 
                 address
                 ? address.lta && address.lng ? { lat: address.lta , lng: address.lng } : undefined
@@ -83,7 +83,7 @@ export const AddressModal: FC<Props> = ({ isOpen, handleOpenModal }) => {
               <Button
                 color="primary"
                 className=" text-white"
-                onClick={handleSaveAddress}
+                onPress={handleSaveAddress}
               >
                 Guardar
               </Button>

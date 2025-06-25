@@ -4,3 +4,6 @@ export * as CategoryAPI from './categoryAPI';
 export * as ProductAPI from './productAPI';
 export * as CartAPI from './cartAPI';
 export * as SubCategoryAPI from './subcategoryAPI';
+export * as UserAPI from './userAPI';
+export * as AddressAPI from './addressAPI';
+export * as PaymentAPI from './paymentAPI';

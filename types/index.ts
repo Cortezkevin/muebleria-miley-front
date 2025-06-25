@@ -1,3 +1,7 @@
+export * from './admin/category';
+export * from './admin/product';
+export * from './admin/subcategory';
+export * from './admin/user';
 export * from './auth/auth';
 export * from './auth/profile';
 export * from './auth/user';
@@ -7,5 +11,6 @@ export * from './catalog/subcategory';
 export * from './commons';
 export * from './delivery/carrier';
 export * from './sales/cart';
+export * from './sales/payment';
 export * from './user/profile';
 export * from './warehouse/grocer';

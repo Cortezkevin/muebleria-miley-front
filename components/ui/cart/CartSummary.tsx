@@ -8,17 +8,45 @@ import { Input } from '@heroui/input'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { AddressModal } from './AddressModal';
+import { AuthContext } from '@/context';
+import { AddressDTO } from '@/types';
+import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
 
 export const CartSummary = () => {
 
   const router = useRouter();
+  const { isLogged, user, isSavingAddress } = React.useContext(AuthContext);
+  const [direction, setDirection] = useState<AddressDTO | undefined>(user.profile.address);
+  const [isDisableButton, setIsDisableButton] = useState(true);
   const { shippingCost, count, subtotal, total, tax, discount, items } = React.useContext(CartContext);
 
   const [openModal, setOpenModal] = useState(false);
 
   const handleContinueOrder = () => {
-    router.push("/cart/checkout/address");
+    if (!isLogged) {
+      toast.error(
+        "Crea una cuenta para continuar con tu pedido"
+      );
+      router.push("/auth/register?prevPage=/cart");
+    } else {
+      router.push("/cart/checkout/address");
+    }
   }
+
+  React.useEffect(() => {
+    if( user.profile.address ){
+      setDirection(user.profile.address);
+      setIsDisableButton(count === 0 || !user.profile.address || user.profile.address.fullAddress === "" );
+    }else {
+      const address = JSON.parse( Cookies.get("address") || "null" ) as AddressDTO;
+      if( address ){
+        setDirection(address);
+      }else {
+        setDirection(undefined);
+      }
+    }
+  }, [user, count]);
 
   return (
    <Card className='flex flex-col gap-5 p-4'>
@@ -26,8 +54,14 @@ export const CartSummary = () => {
       <div className='flex flex-col gap-2'>
         <span>Dirección de Entrega</span>
         <form className='flex flex-col gap-2' action="">
-          <Input size='sm' label="Dirección" />
-          <Button onPress={() => setOpenModal(true)}>Seleccionar Dirección</Button>
+          <Input 
+            disabled size='sm' 
+            label="Direccion de Entrega"
+            value={ direction && direction !== null ? direction.fullAddress : ""}
+          />
+          <Button onPress={() => setOpenModal(true)} isLoading={isSavingAddress}>
+            { direction && direction !== null ? "Cambiar direccion" : "Seleccionar Direccion" }
+          </Button>
         </form>
       </div>
       <Divider />
@@ -56,7 +90,16 @@ export const CartSummary = () => {
       </Card>
       <AddressModal isOpen={ openModal } handleOpenModal={(isOpen) => setOpenModal(isOpen)} />
       <Divider/>
-      <Button onPress={handleContinueOrder}>Continuar</Button>
+      <Button
+        isDisabled={ isDisableButton }
+        size="lg"
+        className="w-full text-white font-semibold rounded-md"
+        color="primary"
+        variant="solid" 
+        onPress={handleContinueOrder}
+      >
+        Continuar
+      </Button>
    </Card>
   )
 }

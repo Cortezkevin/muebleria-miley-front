@@ -1,20 +1,19 @@
 "use client";
 
+import { IUsersTableCell } from "@/app/admin/users/page";
 import {
   CategoryDTO,
+  CreateCategoryModal,
+  CreateProductModal,
+  CreateSubCategoryModal,
+  CreateUserModal,
   ProductDTO,
   SubCategoryDTO,
-  CreateCategoryDTO,
-  CreateProductDTO,
-  CreateSubCategoryDTO,
-  UpdateCategoryDTO,
-  //UpdateProduct,
-  UpdateSubCategoryDTO,
+  UpdateCategoryModal,
+  UpdateSubCategoryModal,
+  UpdateUserModal,
+  UserDTO,
 } from "@/types";
-import { CreateCategoryModal, UpdateCategoryModal } from "@/types/admin/category";
-import { CreateProductModal } from "@/types/admin/product";
-import { CreateSubCategoryModal, UpdateSubCategoryModal } from "@/types/admin/subcategory";
-//import { IUsersTableCell } from "@/declarations/table/users";
 import { createContext } from "react";
 
 export interface StoreProps {
@@ -33,11 +32,11 @@ export interface StoreProps {
     loading: boolean;
     selected: ProductDTO | null;
   };
-  /*user: {
-    users: IUser[];
+  user: {
+    users: UserDTO[];
     loading: boolean;
-    selected: IUser | null;
-  };*/
+    selected: UserDTO | null;
+  };
 
   loadingData: boolean;
 
@@ -46,7 +45,7 @@ export interface StoreProps {
   onSelectCategory: (category: CategoryDTO | null) => void;
   onSelectSubCategory: (subCategory: SubCategoryDTO | null) => void;
   onSelectProduct: (product: ProductDTO | null) => void;
- // onSelectUser: (user: IUsersTableCell | null) => void;
+  onSelectUser: (user: IUsersTableCell | null) => void;
 
   onCreateOrEditCategory: (
     type: "Edit" | "Create",
@@ -66,11 +65,10 @@ export interface StoreProps {
     product: CreateProductModal | any,
     onTerminate: () => void
   ) => void;
-/*
   onCreateOrEditUser: (
     type: "Edit" | "Create",
-    user: CreateUser | UpdateUser,
+    user: CreateUserModal | UpdateUserModal,
     onTerminate: () => void
-  ) => void;*/
+  ) => void;
 }
 export const StoreContext = createContext({} as StoreProps);

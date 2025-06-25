@@ -13,12 +13,16 @@ import {
   //UpdateProduct,
   UpdateSubCategoryDTO,
   SuccessResponseDTO,
+  UserDTO,
+  CreateUserModal,
+  UpdateUserModal,
 } from "@/types";
-import { CategoryAPI, ProductAPI, SubCategoryAPI } from "@/api";
+import { CategoryAPI, ProductAPI, SubCategoryAPI, UserAPI } from "@/api";
 import toast from "react-hot-toast";
 import { CreateCategoryModal, UpdateCategoryModal } from "@/types/admin/category";
 import { CreateSubCategoryModal, UpdateSubCategoryModal } from "@/types/admin/subcategory";
 import { CreateProductModal } from "@/types/admin/product";
+import { IUsersTableCell } from "@/app/admin/users/page";
 //import { IUsersTableCell } from "@/declarations/table/users";
 
 interface Props {
@@ -41,11 +45,11 @@ export interface StoreState {
     loading: boolean;
     selected: ProductDTO | null;
   };
-  /*user: {
-    users: IUser[];
+  user: {
+    users: UserDTO[];
     loading: boolean;
-    selected: IUser | null;
-  };*/
+    selected: UserDTO | null;
+  };
   loadingData: boolean;
 }
 
@@ -65,11 +69,11 @@ const STORE_INITIAL_STATE: StoreState = {
     selected: null,
     loading: false,
   },
-  /* user: {
+  user: {
     users: [],
     selected: null,
     loading: false
-  }, */
+  },
   loadingData: false,
 };
 
@@ -116,13 +120,13 @@ export function StoreProvider ({ children }: Props) {
   }, []);
 
   const loadUsers = async () => {
-    /*const users = await userAPI.getUsers();
+    const users = await UserAPI.getUsers();
     if (users?.success) {
       dispatch({
         type: "[Store] - Load Users",
         payload: users?.content,
       });
-    }*/
+    }
   }
 
   const onSelectCategory = (category: CategoryDTO | null) => {
@@ -147,12 +151,12 @@ export function StoreProvider ({ children }: Props) {
     });
   };
 
-  /*const onSelectUser = (user: IUsersTableCell | null) => {
+  const onSelectUser = (user: IUsersTableCell | null) => {
     dispatch({
       type: "[Store] - Select User",
       payload: user,
     });
-  };*/
+  };
 
   const onCreateOrEditCategory = async (
     type: "Edit" | "Create",
@@ -316,16 +320,16 @@ export function StoreProvider ({ children }: Props) {
     onTerminate();
   }
 
-  /*const onCreateOrEditUser = async (
+  const onCreateOrEditUser = async (
     type: "Edit" | "Create",
-    user: CreateUser | UpdateUser,
+    user: CreateUserModal | UpdateUserModal,
     onTerminate: () => void
   ) => {
     dispatch({
       type: "[Store] - Saving User",
     });
     if( type === "Edit" ){
-      const response = await userAPI.update( user as UpdateUser );
+      const response = await UserAPI.update( user as UpdateUserModal );
       if (response?.success) {
         dispatch({
           type: "[Store] - User Updated",
@@ -337,7 +341,7 @@ export function StoreProvider ({ children }: Props) {
       }
       toast.error(response!.message);
     }else {
-      const response = await userAPI.create( user as CreateUser );
+      const response = await UserAPI.create( user as CreateUserModal );
       if (response?.success) {
         dispatch({
           type: "[Store] - User Created",
@@ -350,7 +354,7 @@ export function StoreProvider ({ children }: Props) {
       toast.error(response!.message);
     }
     onTerminate();
-  };*/
+  };
 
   return (
     <StoreContext.Provider
@@ -364,8 +368,8 @@ export function StoreProvider ({ children }: Props) {
         //onCreateOrEditCollection,
         onCreateOrEditSubCategory,
         onCreateOrEditProduct,
-        //onCreateOrEditUser,
-        //onSelectUser,
+        onCreateOrEditUser,
+        onSelectUser,
         loadUsers
       }}
     >

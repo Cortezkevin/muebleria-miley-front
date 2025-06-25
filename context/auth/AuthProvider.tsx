@@ -3,7 +3,7 @@
 import { ReactElement, useEffect, useReducer, useState } from "react";
 import { AuthContext, AuthReducer } from "./";
 import { AddressDTO, CartDTO, UpdateProfileDTO, UserDTO, NewUserDTO, SuccessResponseDTO, JwtTokenDTO } from "@/types";
-import { /* addressAPI, carrierAPI, */ changePassword, login, /* profileAPI, */ register, validateToken } from "@/api";
+import { /* addressAPI, carrierAPI, */ AddressAPI, changePassword, login, /* profileAPI, */ register, validateToken } from "@/api";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -105,20 +105,21 @@ export default function AuthProvider({ children }: Props) {
       type: "[Auth] - Saving Address",
       payload: true
     })
-    /*const data = await addressAPI.update(address);
-    if( data?.success ){
+    const response = await AddressAPI.update(address);
+    if( response?.success ){
+      const data = response as SuccessResponseDTO<AddressDTO>;
       dispatch({
         type: "[Auth] - Update Address",
         payload: data.content
       })
       toast.success(data.message);
     }else {
-      toast.error(data?.message || "Ocurrio un error");
+      toast.error(response?.message || "Ocurrio un error");
       dispatch({
         type: "[Auth] - Saving Address",
         payload: false
       })
-    }*/
+    }
   }
   
   const validateSession = async () => {
