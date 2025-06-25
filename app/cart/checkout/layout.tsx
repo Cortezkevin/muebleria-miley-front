@@ -58,17 +58,21 @@ export default function CartCheckoutLayout({
         </div>
         <div className={`w-[450px] relative ${step === 4 ? 'hidden' : ''}`}>
           <div className='w-[450px] flex flex-col gap-3 sticky z-100 top-0'>
-            <div className='flex justify-between w-full items-center'>
-              {/* <Button>Editar Carrito</Button> */}
-              <NextLink
-                color="foreground"
-                passHref
-                className={`${step === 3 ? 'hidden' : ''}`}
-                legacyBehavior
-                href={"/cart"}
-              >
-                <Link>Editar</Link>
-              </NextLink>
+            <div className={`flex ${step !== 3 ? 'justify-between' : 'justify-end'} w-full items-center`}>
+              {
+                step !== 3 && (
+                  <NextLink
+                    color="foreground"
+                    passHref
+                    className={`${step === 3 ? 'hidden' : ''}`}
+                    legacyBehavior
+                    href={"/cart"}
+                  >
+                    <Link>Editar</Link>
+                  </NextLink>
+                )
+              }
+              
               <div className='flex flex-col text-end'>
                 <h3 className='text-xl font-semibold'>Resumen del Pedido</h3>
                 <span className='text-sm'><b>{count} items</b> en tu carrito</span>

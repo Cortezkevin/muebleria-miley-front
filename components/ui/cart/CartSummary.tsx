@@ -49,7 +49,7 @@ export const CartSummary = () => {
   }, [user, count]);
 
   return (
-   <Card className='flex flex-col gap-5 p-4'>
+   <Card className='flex flex-col gap-5 p-4 mt-10 '>
       <h2 className='text-lg font-semibold'>Resumen</h2>
       <div className='flex flex-col gap-2'>
         <span>Dirección de Entrega</span>
@@ -100,6 +100,7 @@ export const CartSummary = () => {
       >
         Continuar
       </Button>
+      <small className='text-default-500 text-center text-xs -mt-1'>Selecciona la direccion de entrega para poder continuar con el pedido</small>
    </Card>
   )
 }

@@ -1,3 +1,4 @@
 export type IServerPaymentIntent = {
-  clientSecret: string
+  clientSecret: string;
+  intentId: string;
 }

@@ -17,6 +17,7 @@ const CartPaymentPage: NextPage = () => {
   const [isLoaded, setisLoaded] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [stripeClientSecret, setStripeClientSecret] = React.useState<string>("");
+  const [intentId, setIntentId] = React.useState<string>("");
   
   React.useEffect(() => {
     const user = JSON.parse( Cookies.get("user") || "null" ) as UserDTO;
@@ -37,7 +38,8 @@ const CartPaymentPage: NextPage = () => {
     if( response?.success ){
       const data = response as SuccessResponseDTO<IServerPaymentIntent>;
       setisLoaded(true);
-      setStripeClientSecret( data.content.clientSecret );
+      setStripeClientSecret(data.content.clientSecret);
+      setIntentId(data.content.intentId)
       setIsLoading(false);
       return data.content.clientSecret;
     }else {
@@ -58,7 +60,7 @@ const CartPaymentPage: NextPage = () => {
       {
         stripePromise && stripeClientSecret && (
           <Elements stripe={ stripePromise } options={{ clientSecret: stripeClientSecret }}>
-            <PaymentForm /> 
+            <PaymentForm intentId={ intentId }/> 
           </Elements>
         )
       }

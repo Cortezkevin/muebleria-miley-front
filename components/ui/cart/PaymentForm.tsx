@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import {
   PaymentElement,
   useElements,
@@ -11,13 +11,19 @@ import { Image } from "@heroui/image";
 import { AuthContext } from "@/context/auth";
 import Cookies from 'js-cookie';
 import { StripePaymentElementChangeEvent } from "@stripe/stripe-js";
+import { CancelPaymentProcessModal } from "./CancelPaymentProcessModal";
 
-export const PaymentForm = () => {
+type Props = {
+  intentId: string;
+}
+
+export const PaymentForm: FC<Props> = ({ intentId }) => {
   const { user } = React.useContext(AuthContext);
   const { total, onClear, id } = React.useContext(CartContext);
   const [saveEvent, setSaveEvent] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [isProcessing, setIsProcessing] = React.useState(false);
+  const [cancelProcessModal, setCancelProcessModal] = React.useState(false);
 
   const [isCompletedForm, setIsCompletedForm] = React.useState(false);
 
@@ -72,6 +78,10 @@ export const PaymentForm = () => {
     setIsCompletedForm(e.complete);
   }
 
+  const handleCancelProcess = () => {
+    setCancelProcessModal(true);
+  }
+
   return (
     <div className="rounded-lg shadow-l flex flex-col gap-8 items-center">
       <div className="flex flex-col items-center">
@@ -85,29 +95,39 @@ export const PaymentForm = () => {
           Realizar Pago y Generar el Pedido
         </h2>
         <PaymentElement onChange={handleChangePaymentForm} />
-        <Button
-          isDisabled={ !isCompletedForm }
-          className="hover:text-white"
-          color="primary"
-          variant="ghost"
-          size="lg"
-          type="submit"
-          isLoading={isProcessing}
-        >
-          {
-            isProcessing
-            ? "Procesando"
-            : (<div className="flex gap-2">
-            Pagar<p className="text-lg font-semibold">{"S/." + total}</p>
-            </div>)
-          }
-        </Button>
+        <div className="flex flex-col gap-3">
+          <Button
+            isDisabled={ !isCompletedForm }
+            className="hover:text-white"
+            color="primary"
+            variant="solid"
+            size="lg"
+            type="submit"
+            isLoading={isProcessing}
+          >
+            {
+              isProcessing
+              ? "Procesando"
+              : (<div className="flex gap-2">
+              Pagar<p className="text-lg font-semibold">{"S/." + total}</p>
+              </div>)
+            }
+          </Button>
+          <Button 
+            color="danger" 
+            variant="flat"
+            onPress={handleCancelProcess}
+          >
+            Cancelar Operacion
+          </Button>
+        </div>
         {errorMessage !== "" && (
           <span className="p-3 bg-red-300 border border-red-600 text-red-600 rounded-md mt-2 text-center">
             {errorMessage}
           </span>
         )}
       </form>
+      <CancelPaymentProcessModal intentId={intentId} isOpen={cancelProcessModal} handleOpenModal={isOpen => setCancelProcessModal(isOpen)} />
     </div>
   );
 }
