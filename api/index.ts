@@ -7,3 +7,5 @@ export * as SubCategoryAPI from './subcategoryAPI';
 export * as UserAPI from './userAPI';
 export * as AddressAPI from './addressAPI';
 export * as PaymentAPI from './paymentAPI';
+export * as ProfileAPI from './profileAPI';
+export * as OrderAPI from './orderAPI';

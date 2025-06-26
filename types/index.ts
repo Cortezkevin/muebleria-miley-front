@@ -11,6 +11,7 @@ export * from './catalog/subcategory';
 export * from './commons';
 export * from './delivery/carrier';
 export * from './sales/cart';
+export * from './sales/order';
 export * from './sales/payment';
 export * from './user/profile';
 export * from './warehouse/grocer';

@@ -3,7 +3,7 @@
 import { ReactElement, useEffect, useReducer, useState } from "react";
 import { AuthContext, AuthReducer } from "./";
 import { AddressDTO, CartDTO, UpdateProfileDTO, UserDTO, NewUserDTO, SuccessResponseDTO, JwtTokenDTO } from "@/types";
-import { /* addressAPI, carrierAPI, */ AddressAPI, changePassword, login, /* profileAPI, */ register, validateToken } from "@/api";
+import { /* addressAPI, carrierAPI, */ AddressAPI, changePassword, login, ProfileAPI, /* profileAPI, */ register, validateToken } from "@/api";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -206,32 +206,33 @@ export default function AuthProvider({ children }: Props) {
     }
   }
 
-  /*const handleUpdateProfile = async ( profile: UpdateProfileDTO, file?: File ) => {
+  const handleUpdateProfile = async ( profile: UpdateProfileDTO, file?: File ) => {
     dispatch({
       type: "[Auth] - Saving Profile",
       payload: true
     })
-    const response = await profileAPI.update( profile, file );
+    const response = await ProfileAPI.update( profile, file );
     if( response?.success ){
+      const data = response as SuccessResponseDTO<UserDTO>;
       dispatch({
         type: "[Auth] - Update Profile",
-        payload: response.content
+        payload: data.content
       })
-      toast.success(response.message);
+      toast.success(data.message);
       dispatch({
         type: "[Auth] - Saving Profile",
         payload: true
       })
       return true;
     }else {
-      toast.error(response?.message || "Ocurrio un error");
+      toast.error(response?.message || "Ocurrio un error, vuelve a intentarlo");
       dispatch({
         type: "[Auth] - Saving Profile",
-        payload: true
+        payload: false
       })
       return false;
     }
-  }*/
+  }
 
   /*const onAvailableStatus = async ( id: string, type: "Carrier" | "Grocer" ) => {
     if(type === "Carrier"){
@@ -258,6 +259,7 @@ export default function AuthProvider({ children }: Props) {
         onChangePassword: handleChangePassword,
         onUpdateAddress: handleUpdateAddress,
         onUpdateAddressMemory: handleUpdateAddressMemory,
+        onUpdateProfile: handleUpdateProfile,
         isLoadingUserData,
       }}
     >

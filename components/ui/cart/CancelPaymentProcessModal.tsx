@@ -10,13 +10,14 @@ import toast from 'react-hot-toast';
 type Props = {
   isOpen: boolean;
   handleOpenModal: ( isOpen: boolean ) => void;
+  onSuccessCancelPayment: () => void;
   intentId: string;
 }
 
-export const CancelPaymentProcessModal: FC<Props> = ({ isOpen, handleOpenModal, intentId }) => {
+export const CancelPaymentProcessModal: FC<Props> = ({ isOpen, handleOpenModal, intentId, onSuccessCancelPayment }) => {
 
-    const [reason, setReason] = React.useState<string>("");
-    const [isLoading, setIsLoading] = React.useState(false);
+  const [reason, setReason] = React.useState<string>("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleConfirmCancelation = async () => {
     setIsLoading(true)
@@ -25,6 +26,7 @@ export const CancelPaymentProcessModal: FC<Props> = ({ isOpen, handleOpenModal, 
         const data = response as SuccessResponseDTO<string>;
         toast.success(data.content);
         handleOpenModal(false);
+        onSuccessCancelPayment();
     }
     setIsLoading(false);
   }

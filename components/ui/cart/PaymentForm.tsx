@@ -12,6 +12,7 @@ import { AuthContext } from "@/context/auth";
 import Cookies from 'js-cookie';
 import { StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { CancelPaymentProcessModal } from "./CancelPaymentProcessModal";
+import { useRouter } from "next/navigation";
 
 type Props = {
   intentId: string;
@@ -20,8 +21,8 @@ type Props = {
 export const PaymentForm: FC<Props> = ({ intentId }) => {
   const { user } = React.useContext(AuthContext);
   const { total, onClear, id } = React.useContext(CartContext);
-  const [saveEvent, setSaveEvent] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState("");
+  const [isSuccessPayment, setIsSuccessPayment] = React.useState(false);
+  const router = useRouter();
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [cancelProcessModal, setCancelProcessModal] = React.useState(false);
 
@@ -31,10 +32,10 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
   const elements = useElements();
 
   React.useEffect(() => {
-    if (id && saveEvent) {
+    if (id && isSuccessPayment) {
       onClear();
     }
-  }, [id, saveEvent]);
+  }, [id, isSuccessPayment]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,9 +45,6 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
         return;
       }
       setIsProcessing(true);
-      setSaveEvent(true);
-  
-      console.log(user.id)
 
       let returnUrl = "";
       const extraData: { specific: string, note: string } = JSON.parse(Cookies.get("extraOrderData") || "null");
@@ -64,8 +62,11 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
       });
   
       if (error) {
-        setErrorMessage(error.message || "Ocurrio un error");
+        toast.error(error.message || "Ocurrio un error");
+        setIsSuccessPayment(false);
+        router.push('/cart');
       } else {
+        setIsSuccessPayment(true);
         toast.success("Compra realizada correctamente");
       }
       setIsProcessing(false);
@@ -80,6 +81,29 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
 
   const handleCancelProcess = () => {
     setCancelProcessModal(true);
+  }
+
+  React.useEffect(() => {
+    const handleBeforeUnload = (event: any) => {
+      event.preventDefault();
+      event.returnValue = '';
+      setCancelProcessModal(true);
+    };
+
+    if(isProcessing){
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }else {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isProcessing]);
+
+  const handleSuccessCancelPayment = () => {
+    setCancelProcessModal(false);
+    router.push('/cart');
   }
 
   return (
@@ -121,13 +145,18 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
             Cancelar Operacion
           </Button>
         </div>
-        {errorMessage !== "" && (
+        {/* {errorMessage !== "" && (
           <span className="p-3 bg-red-300 border border-red-600 text-red-600 rounded-md mt-2 text-center">
             {errorMessage}
           </span>
-        )}
+        )} */}
       </form>
-      <CancelPaymentProcessModal intentId={intentId} isOpen={cancelProcessModal} handleOpenModal={isOpen => setCancelProcessModal(isOpen)} />
+      <CancelPaymentProcessModal 
+        intentId={intentId} 
+        isOpen={cancelProcessModal} 
+        handleOpenModal={isOpen => setCancelProcessModal(isOpen)}
+        onSuccessCancelPayment={handleSuccessCancelPayment}
+      />
     </div>
   );
 }

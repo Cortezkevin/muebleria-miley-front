@@ -74,7 +74,8 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
     case '[Auth] - Update Profile':
       return {
         ...state,
-        user: action.payload/* {
+        isSavingProfile: false,
+        user: {
           ...state.user,
           firstName: action.payload.firstName,
           lastName: action.payload.lastName,
@@ -84,7 +85,7 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
             phone: action.payload.profile.phone,
             birthDate: action.payload.profile.birthDate
           }
-        } */
+        }
       }
     case '[Auth] - Logout':
       return {

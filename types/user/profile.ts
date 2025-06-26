@@ -5,4 +5,5 @@ export type UpdateProfileDTO = {
   email: string;
   phone: string;
   birthdate: string;
+  photoUrl: string;
 }

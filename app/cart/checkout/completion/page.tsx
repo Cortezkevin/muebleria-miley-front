@@ -12,7 +12,7 @@ export default function CompletionPage() {
   }
 
   return (
-    <div className="bg-red-200 h-full flex items-center justify-center">
+    <div className=" h-full flex items-center justify-center">
       <div className="flex flex-col gap-4 w-[300px] min-h-[435px] justify-center">
         <h1 className="text-lg font-semibold text-center">¡GRACIAS POR TU COMPRA!</h1>
         <div className="flex flex-col gap-2 items-center">
