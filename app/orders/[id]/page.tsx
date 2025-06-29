@@ -64,7 +64,7 @@ export default function OrderDetailPage({
           <div className="flex gap-4">
             <p>Estado:</p>
             <Chip
-              variant="flat"
+              variant="bordered"
               size="lg"
               color={
                 order.status === "PENDING"
@@ -104,6 +104,7 @@ export default function OrderDetailPage({
               </h3>
               <div className="flex flex-col gap-2">
                 <Input
+                  variant="bordered"
                   label="Nombre del Transportador"
                   value={ (order.shipping && order.shipping.carrier ) ? order.shipping.carrier.fullName : "Aun no empieza el envio" }
                   isReadOnly
@@ -111,12 +112,14 @@ export default function OrderDetailPage({
                 {
                   order.shipping && order.shipping.carrier &&
                   <Input
+                    variant="bordered"
                     label="Telefono de Contacto"
                     value={ order.shipping.carrier.phone }
                     isReadOnly
                   />
                 }
                 <Input
+                  variant="bordered"
                   label="Direccion de Entrega"
                   value={ order.shippingAddress }
                   isReadOnly
@@ -127,6 +130,7 @@ export default function OrderDetailPage({
               <h3 className="text-lg font-semibold">Informacion Adicional</h3>
               <div className="flex flex-col gap-2">
                 <Textarea
+                  variant="bordered"
                   label="Nota"
                   value={ order.note }
                   isReadOnly

@@ -9,3 +9,6 @@ export * as AddressAPI from './addressAPI';
 export * as PaymentAPI from './paymentAPI';
 export * as ProfileAPI from './profileAPI';
 export * as OrderAPI from './orderAPI';
+export * as SupplierAPI from './supplierAPI';
+export * as PurchaseOrderAPI from './purchaseOrderAPI';
+export * as RawMaterialAPI from './rawMaterialAPI';

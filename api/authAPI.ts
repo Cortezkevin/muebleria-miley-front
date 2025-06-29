@@ -2,13 +2,12 @@ import { CartDTO, UserDTO, JwtTokenDTO, NewUserDTO, SuccessResponseDTO, ErrorRes
 import { AxiosInstance } from "./axios"
 import { isAxiosError } from "axios";
 import Cokkies from 'js-cookie';
-import { unknownError } from "@/utils/helpers";
+import { handleAPIError, unknownError } from "@/utils/helpers";
 const PATH = "auth/";
 
 export const login = async (email: string, password: string): Promise<SuccessResponseDTO<JwtTokenDTO> | ErrorResponseDTO> => {
   try{
     const { data } = await AxiosInstance.post<SuccessResponseDTO<JwtTokenDTO>>(PATH + "login", { email, password });
-    console.log("loginResposne",data)
      if( data.success ){
       Cokkies.set('token', data.content.token);
       Cokkies.set('user',JSON.stringify(data.content.user));
@@ -30,14 +29,7 @@ export const login = async (email: string, password: string): Promise<SuccessRes
       return data as ErrorResponseDTO;
     }
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }else {
-      return unknownError;
-    }
+    return handleAPIError(e);
   }
 }
 
@@ -63,46 +55,31 @@ export const register = async (newUser: NewUserDTO): Promise<SuccessResponseDTO<
     }
     return data;
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }else {
-      return unknownError;
-    }
+    return handleAPIError(e);
   }
 }
 
-export const sendConfirmationEmail = async (to: string) => {
+export const sendConfirmationEmail = async (to: string): Promise<SuccessResponseDTO<string> | ErrorResponseDTO> => {
   try{
     const { data } = await AxiosInstance.get<SuccessResponseDTO<string>>(PATH + "sendConfirmationEmail?to=" + to);
     return data;
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }
+    return handleAPIError(e);
   }
 }
 
-export const changePassword = async ({ password, confirmPassword, tokenPassword }: { password: string, confirmPassword: string, tokenPassword: string }) => {
+export const changePassword = async (
+  { password, confirmPassword, tokenPassword }: { password: string, confirmPassword: string, tokenPassword: string }
+): Promise<SuccessResponseDTO<string> | ErrorResponseDTO> => {
   try{
     const { data } = await AxiosInstance.put<SuccessResponseDTO<string>>(PATH + "changePassword", { password, confirmPassword, tokenPassword });
     return data;
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }
+    return handleAPIError(e);
   }
 }
 
-export const validateToken = async ( token: string  ) => {
+export const validateToken = async ( token: string  ): Promise<SuccessResponseDTO<UserDTO> | ErrorResponseDTO> => {
   try{
     const response = await fetch("http://localhost:4000/api/auth/getUserFromToken", 
     { method: "GET", credentials: "omit", headers: { "Authorization": "Bearer " + token }, }
@@ -119,12 +96,6 @@ export const validateToken = async ( token: string  ) => {
   }catch(e){
     Cokkies.remove("token");
     Cokkies.remove("user");
-    if(isAxiosError(e)){
-      if( e.response?.status === 401){
-        return null;
-      }
-      return null;
-    }
-    return null;
+    return handleAPIError(e);
   }
 }

@@ -1,8 +1,7 @@
 import { ProductDTO, CreateProductDTO, SuccessResponseDTO, ErrorResponseDTO, DetailedProductDTO } from "@/types";
 import { AxiosInstance } from "./axios"
 import { isAxiosError } from "axios";
-import Cookies from 'js-cookie';
-import { unknownError } from "@/utils/helpers";
+import { handleAPIError, headersMultipartWithToken, unknownError } from "@/utils/helpers";
 
 const PATH = "product";
 
@@ -11,13 +10,7 @@ export const getAll = async (): Promise<SuccessResponseDTO<ProductDTO[]> | Error
     const { data } = await AxiosInstance.get<SuccessResponseDTO<ProductDTO[]>>(PATH + "/public");
     return data;
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }
-    return unknownError;
+    return handleAPIError(e);
   } 
 }
 
@@ -26,13 +19,7 @@ export const getDetailsById = async (id: string): Promise<SuccessResponseDTO<Det
     const { data } = await AxiosInstance.get<SuccessResponseDTO<DetailedProductDTO>>(PATH + "/public/" + id);
     return data;
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }
-    return unknownError;
+    return handleAPIError(e);
   } 
 }
 
@@ -45,30 +32,14 @@ export const create = async (createProductDTO: CreateProductDTO, images: File[])
   
   try{
     if(createProductDTO.colorImages && createProductDTO.colorImages.length > 0){
-      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/color_images", formData, {
-        "headers": {
-          "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + Cookies.get("token")
-        }
-      });
+      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/color_images", formData, headersMultipartWithToken);
       return data;
     }else {
-      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/default-images", formData, {
-        "headers": {
-          "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + Cookies.get("token")
-        }
-      });
+      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/default-images", formData, headersMultipartWithToken);
       return data;
     }
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }
-    return unknownError;
+    return handleAPIError(e);
   } 
 }
 

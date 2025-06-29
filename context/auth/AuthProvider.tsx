@@ -123,9 +123,9 @@ export default function AuthProvider({ children }: Props) {
   }
   
   const validateSession = async () => {
-    const data = await validateToken(Cookies.get("token") || '');
-    console.log(data);
-    if( data && data.success){
+    const response = await validateToken(Cookies.get("token") || '');
+    if( response.success ){
+      const data = response as SuccessResponseDTO<UserDTO>;
       dispatch({
         type: "[Auth] - Login",
         payload: {

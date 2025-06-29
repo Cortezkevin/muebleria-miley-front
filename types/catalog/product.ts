@@ -1,3 +1,4 @@
+import { SimpleSupplierDTO } from "../admin";
 import { SubCategoryDTO } from "./subcategory";
 
 export type ProductDTO = {
@@ -6,6 +7,7 @@ export type ProductDTO = {
     description: string;
     category: string;
     subcategory: SubCategoryDTO;
+    supplier?: SimpleSupplierDTO;
     price: string;
     stock: number;
     images: string[];

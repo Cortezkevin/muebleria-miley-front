@@ -120,11 +120,12 @@ export function StoreProvider ({ children }: Props) {
   }, []);
 
   const loadUsers = async () => {
-    const users = await UserAPI.getUsers();
-    if (users?.success) {
+    const response = await UserAPI.getUsers();
+    if (response?.success) {
+      const data = response as SuccessResponseDTO<UserDTO[]>;
       dispatch({
         type: "[Store] - Load Users",
-        payload: users?.content,
+        payload: data?.content,
       });
     }
   }
@@ -331,11 +332,12 @@ export function StoreProvider ({ children }: Props) {
     if( type === "Edit" ){
       const response = await UserAPI.update( user as UpdateUserModal );
       if (response?.success) {
+        const data = response as SuccessResponseDTO<UserDTO>;
         dispatch({
           type: "[Store] - User Updated",
-          payload: response.content,
+          payload: data.content,
         });
-        toast.success(response.message);
+        toast.success(data.message);
         onTerminate();
         return;
       }
@@ -343,11 +345,12 @@ export function StoreProvider ({ children }: Props) {
     }else {
       const response = await UserAPI.create( user as CreateUserModal );
       if (response?.success) {
+        const data = response as SuccessResponseDTO<UserDTO>;
         dispatch({
           type: "[Store] - User Created",
-          payload: response.content,
+          payload: data.content,
         });
-        toast.success(response.message);
+        toast.success(data.message);
         onTerminate();
         return;
       }

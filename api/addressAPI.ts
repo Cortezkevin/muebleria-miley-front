@@ -1,28 +1,14 @@
-import { AddressDTO, SuccessResponseDTO, ErrorResponseDTO } from "@/types";
+import { AddressDTO, ErrorResponseDTO, SuccessResponseDTO } from "@/types";
 import { AxiosInstance } from "./axios"
-import { isAxiosError } from "axios";
-import Cookies from 'js-cookie';
-import { unknownError } from "@/utils/helpers";
+import { handleAPIError, headersWithToken } from "@/utils/helpers";
 
 const PATH = "address";
 
-export const update = async (address: AddressDTO ) => {
+export const update = async (address: AddressDTO ): Promise<SuccessResponseDTO<AddressDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.put<SuccessResponseDTO<AddressDTO>>(PATH, address, {
-      "headers": {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + Cookies.get("token")
-      }
-    });
+    const { data } = await AxiosInstance.put<SuccessResponseDTO<AddressDTO>>(PATH, address, headersWithToken);
     return data;
   }catch(e){
-    if(isAxiosError(e)){
-      if( e.response?.status === 404){
-        return e.response!.data as ErrorResponseDTO;
-      }
-      return e.response!.data as ErrorResponseDTO;
-    }else {
-      return unknownError;
-    }
+    return handleAPIError(e);
   } 
 }
