@@ -3,8 +3,6 @@ import AuthProvider from "./auth/AuthProvider";
 import ShopProvider from "./shop/ShopProvider";
 import CartProvider from "./cart/CartProvider";
 import AdminProviders from "./admin/AdminProvider";
-/*
-import AdminProviders from "./admin/AdminProvider"; */
 
 export default function AppProviders({ children }: { children: React.ReactElement } ){
   return (
@@ -12,9 +10,8 @@ export default function AppProviders({ children }: { children: React.ReactElemen
     <AuthProvider>
       <CartProvider>          
         <AdminProviders>
-              { children }
+          { children }
         </AdminProviders>
-{/*          </CartProvider> */}
       </CartProvider>
     </AuthProvider>
     </ShopProvider>

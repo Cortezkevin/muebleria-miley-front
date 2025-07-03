@@ -68,7 +68,7 @@ export const getDetailedOrder = async (orderId: string): Promise<SuccessResponse
   }
 }
 
-export const getOrdersByUser = async (userId: string) => {
+export const getOrdersByUser = async (userId: string): Promise<SuccessResponseDTO<OrderDTO[]> | ErrorResponseDTO> => {
   try {
     const { data } = await AxiosInstance.get<SuccessResponseDTO<OrderDTO[]>>(PATH + "/findBy/" + userId, headersWithToken);
     return data;
@@ -77,7 +77,7 @@ export const getOrdersByUser = async (userId: string) => {
   }
 }
 
-export const cancel = async (orderId: string) => {
+export const cancel = async (orderId: string): Promise<SuccessResponseDTO<OrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.put<SuccessResponseDTO<OrderDTO>>(PATH + "/cancel/" + orderId, headersWithToken);
     return response.data;
@@ -86,7 +86,7 @@ export const cancel = async (orderId: string) => {
   }
 }
 
-export const startShippingOrder = async (data: { orderId: string, userId: string }) => {
+export const startShippingOrder = async (data: { orderId: string, userId: string }): Promise<SuccessResponseDTO<ShippingOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<ShippingOrderDTO>>(PATH + "/shipping/start", data, headersWithToken);
     return response.data;
@@ -95,7 +95,7 @@ export const startShippingOrder = async (data: { orderId: string, userId: string
   }
 }
 
-export const checkPrepareShippingOrder = async (data: { orderShippingId: string }) => {
+export const checkPrepareShippingOrder = async (data: { orderShippingId: string }): Promise<SuccessResponseDTO<ShippingOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<ShippingOrderDTO>>(PATH + "/shipping/prepare", data, headersWithToken);
     return response.data;
@@ -104,7 +104,7 @@ export const checkPrepareShippingOrder = async (data: { orderShippingId: string 
   }
 }
 
-export const checkTransitShippingOrder = async (data: { orderShippingId: string }) => {
+export const checkTransitShippingOrder = async (data: { orderShippingId: string }): Promise<SuccessResponseDTO<ShippingOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<ShippingOrderDTO>>(PATH + "/shipping/transit", data, headersWithToken);
     return response.data;
@@ -113,7 +113,7 @@ export const checkTransitShippingOrder = async (data: { orderShippingId: string 
   }
 }
 
-export const completeShippingOrder = async (data: { orderShippingId: string }) => {
+export const completeShippingOrder = async (data: { orderShippingId: string }): Promise<SuccessResponseDTO<ShippingOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<ShippingOrderDTO>>(PATH + "/shipping/complete", data, headersWithToken);
     return response.data;
@@ -122,7 +122,7 @@ export const completeShippingOrder = async (data: { orderShippingId: string }) =
   }
 }
 
-export const startPreparationOrder = async (data: { orderId: string, userId: string }) => {
+export const startPreparationOrder = async (data: { orderId: string, userId: string }): Promise<SuccessResponseDTO<PreparationOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<PreparationOrderDTO>>(PATH + "/preparation/start", data, headersWithToken);
     return response.data;
@@ -131,7 +131,7 @@ export const startPreparationOrder = async (data: { orderId: string, userId: str
   }
 }
 
-export const checkPackagingPreparationOrder = async (data: { preparationOrderId: string }) => {
+export const checkPackagingPreparationOrder = async (data: { preparationOrderId: string }): Promise<SuccessResponseDTO<PreparationOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<PreparationOrderDTO>>(PATH + "/preparation/packaging", data, headersWithToken);
     return response.data;
@@ -140,7 +140,7 @@ export const checkPackagingPreparationOrder = async (data: { preparationOrderId:
   }
 }
 
-export const completePreparationOrder = async (completePreparationOrder: CompletedOrderPreparationDTO) => {
+export const completePreparationOrder = async (completePreparationOrder: CompletedOrderPreparationDTO): Promise<SuccessResponseDTO<PreparationOrderDTO> | ErrorResponseDTO> => {
   try {
     const response = await AxiosInstance.post<SuccessResponseDTO<PreparationOrderDTO>>(PATH + "/preparation/complete", completePreparationOrder, headersWithToken);
     return response.data;

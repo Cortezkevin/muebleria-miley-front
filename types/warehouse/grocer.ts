@@ -8,3 +8,7 @@ export type GrocerDTO = {
   userId: string;
   status: GrocerStatus;
 }
+
+export type NewGrocerDTO = {
+  userId: string;
+}

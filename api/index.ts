@@ -12,3 +12,8 @@ export * as OrderAPI from './orderAPI';
 export * as SupplierAPI from './supplierAPI';
 export * as PurchaseOrderAPI from './purchaseOrderAPI';
 export * as RawMaterialAPI from './rawMaterialAPI';
+export * as GrocerAPI from './grocerAPI';
+export * as CarrierAPI from './carrierAPI';
+export * as WarehouseAPI from './warehouseAPI';
+export * as MovementsAPI from './movementsAPI';
+export * as PurchaseOrderReceptionAPI from './purchaseOrderReceptionAPI';

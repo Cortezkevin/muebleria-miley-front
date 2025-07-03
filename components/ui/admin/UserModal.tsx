@@ -13,7 +13,7 @@ import React from "react";
 import * as yup from "yup";
 import { Select, SelectItem } from "@heroui/select";
 import { UserAPI } from "@/api";
-import { RoleDTO, Status } from "@/types";
+import { RoleDTO, Status, SuccessResponseDTO } from "@/types";
 import { Chip } from "@heroui/react";
 import { StoreContext } from "@/context";
 
@@ -69,7 +69,8 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
     (async () => {
       const response = await UserAPI.getRoles();
       if (response && response.success) {
-        setRoles(response.content);
+        const data = response as SuccessResponseDTO<RoleDTO[]>;
+        setRoles(data.content);
       }
     })();
   }, []);

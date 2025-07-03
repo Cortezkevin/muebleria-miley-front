@@ -1,9 +1,8 @@
 "use client";
-import React, { FC, PropsWithChildren, useContext } from 'react'
+import React, { FC, PropsWithChildren } from 'react'
 import { AdminMenu } from './admin/AdminMenu'
 import { Toaster } from 'react-hot-toast'
 import { Footer } from '../Footer'
-import { AuthContext } from '@/context/auth'
 import { usePathname } from 'next/navigation'
 import { Navbar } from '../navbar';
 

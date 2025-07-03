@@ -1,6 +1,7 @@
 import { validateToken } from "@/api";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { SuccessResponseDTO, UserDTO } from "./types";
 
 export function middleware(req: NextRequest) {
   switch (req.nextUrl.pathname) {
@@ -39,7 +40,8 @@ export function middleware(req: NextRequest) {
 }
 
 const validateRoleAdmin = async (req: NextRequest) => {
-  const session = await validateToken(req.cookies.get("token")?.value + "");
+  const response = await validateToken(req.cookies.get("token")?.value + "");
+  const session = response as SuccessResponseDTO<UserDTO>;  
   if (!session?.success || session === undefined || session === null) {
     const requestedPage = req.nextUrl.pathname;
     const url = req.nextUrl.clone();
@@ -59,7 +61,8 @@ const validateRoleAdmin = async (req: NextRequest) => {
 };
 
 const validateRoleGrocerOrAdmin = async (req: NextRequest) => {
-  const session = await validateToken(req.cookies.get("token")?.value + "");
+  const response = await validateToken(req.cookies.get("token")?.value + "");
+  const session = response as SuccessResponseDTO<UserDTO>;
   if (!session?.success || session === undefined || session === null) {
     const requestedPage = req.nextUrl.pathname;
     const url = req.nextUrl.clone();
@@ -87,7 +90,8 @@ const validateRoleGrocerOrAdmin = async (req: NextRequest) => {
 };
 
 const validateRoleCarrierGrocerOrAdmin = async (req: NextRequest) => {
-  const session = await validateToken(req.cookies.get("token")?.value + "");
+  const response = await validateToken(req.cookies.get("token")?.value + "");
+  const session = response as SuccessResponseDTO<UserDTO>;
   if (!session?.success || session === undefined || session === null) {
     const requestedPage = req.nextUrl.pathname;
     const url = req.nextUrl.clone();

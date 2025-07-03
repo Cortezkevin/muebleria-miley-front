@@ -15,7 +15,7 @@ export default function AdminLayout({
   return (
     <AdminProviders>
       <div className="flex h-[100vh]">
-        <div className="w-[calc(100vw-280px)] h-full animate__animated animate__fadeIn animate__slower overflow-hidden p-6">
+        <div className="w-[calc(100vw-240px)] h-full animate__animated animate__fadeIn animate__slower overflow-auto p-6">
           { children }
         </div>
       </div>

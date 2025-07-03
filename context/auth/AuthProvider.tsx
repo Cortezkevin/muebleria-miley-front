@@ -3,7 +3,7 @@
 import { ReactElement, useEffect, useReducer, useState } from "react";
 import { AuthContext, AuthReducer } from "./";
 import { AddressDTO, CartDTO, UpdateProfileDTO, UserDTO, NewUserDTO, SuccessResponseDTO, JwtTokenDTO } from "@/types";
-import { /* addressAPI, carrierAPI, */ AddressAPI, changePassword, login, ProfileAPI, /* profileAPI, */ register, validateToken } from "@/api";
+import { /* addressAPI, carrierAPI, */ AddressAPI, CarrierAPI, changePassword, login, ProfileAPI, /* profileAPI, */ register, validateToken } from "@/api";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -234,9 +234,9 @@ export default function AuthProvider({ children }: Props) {
     }
   }
 
-  /*const onAvailableStatus = async ( id: string, type: "Carrier" | "Grocer" ) => {
+  const handleAvailableStatus = async ( id: string, type: "Carrier" | "Grocer" ) => {
     if(type === "Carrier"){
-      const response = await carrierAPI.availableStatus( id );
+      const response = await CarrierAPI.availableStatus( id );
       if( response?.success ){
         toast.success( response.message );
         dispatch({
@@ -246,7 +246,7 @@ export default function AuthProvider({ children }: Props) {
         toast.error(response?.message || "Ocurrio un error");
       }
     }
-  }*/
+  }
 
   return (
     <AuthContext.Provider
@@ -260,6 +260,7 @@ export default function AuthProvider({ children }: Props) {
         onUpdateAddress: handleUpdateAddress,
         onUpdateAddressMemory: handleUpdateAddressMemory,
         onUpdateProfile: handleUpdateProfile,
+        onAvailableStatus: handleAvailableStatus,
         isLoadingUserData,
       }}
     >

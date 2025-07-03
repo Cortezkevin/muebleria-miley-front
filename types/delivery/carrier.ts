@@ -9,3 +9,9 @@ export type CarrierDTO = {
   userId: string;
   status: CarrierStatus;
 }
+
+export type NewCarrierDTO = {
+  userId: string;
+  plateCode: string;
+  status: CarrierStatus;
+}

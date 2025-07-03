@@ -1,4 +1,5 @@
 export * from './admin/category';
+export * from './admin/movements';
 export * from './admin/product';
 export * from './admin/purchaseOrder';
 export * from './admin/subcategory';

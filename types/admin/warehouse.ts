@@ -32,7 +32,7 @@ export type DetailedMovementsDTO = {
   date: string;
   reason: string;
   rawMaterial?: RawMaterialDTO;
-  productDTO?: ProductDTO;
+  product?: ProductDTO;
   warehouse: string;
   guide: string;
 }

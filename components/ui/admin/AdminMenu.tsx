@@ -9,10 +9,12 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/d
 import { User } from "@heroui/user";
 import { Divider } from "@heroui/divider";
 import { Listbox, ListboxItem, ListboxSection } from "@heroui/listbox";
+import { Tooltip } from "@heroui/tooltip";
+import { CarrierDTO } from "@/types";
 
 export const AdminMenu = () => {
   const router = useRouter();
-  const { user, onLogout } = useContext(AuthContext);
+  const { user, onLogout, onAvailableStatus } = useContext(AuthContext);
   const pathname = usePathname();
 
   const handleLogout = () => {
@@ -89,12 +91,12 @@ export const AdminMenu = () => {
                   user.roleExtraData.status.replaceAll("_", " ")}
               </p>
             </DropdownItem>
-            {/* <DropdownItem
+            <DropdownItem
               key="Estado"
               isReadOnly
               className={
                 user.roleExtraData &&
-                !!(user.roleExtraData as ICarrier).plateCode &&
+                !!(user.roleExtraData as CarrierDTO).plateCode &&
                 user.roleExtraData?.status === "EN_DESCANSO"
                   ? ""
                   : "hidden"
@@ -103,7 +105,7 @@ export const AdminMenu = () => {
               <div className="flex gap-2">
                 <p>Cambiar Estado:</p>
                 <div className="flex gap-1">
-                  <Tooltip
+                  <Tooltip 
                     color={"success"}
                     content={"Disponible"}
                     className="capitalize text-white"
@@ -119,7 +121,7 @@ export const AdminMenu = () => {
                   </Tooltip>
                 </div>
               </div>
-            </DropdownItem> */}
+            </DropdownItem>
             <DropdownItem key="MiPerfil" onClick={handleProfile}>
               Mi perfil
             </DropdownItem>
