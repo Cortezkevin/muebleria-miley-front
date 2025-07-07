@@ -11,7 +11,6 @@ import { CategoryDTO } from "@/types";
 export const OurCategories = () => {
   const { categories } = useContext(ShopContext);
   const [selectedCategory, setSelectedCategory] = useState<CategoryDTO | undefined>(undefined);
-  console.log(categories)
 
   useEffect(() => {
     if(categories.data){

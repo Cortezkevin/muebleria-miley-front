@@ -1,7 +1,6 @@
 import { ProductDTO, CreateProductDTO, SuccessResponseDTO, ErrorResponseDTO, DetailedProductDTO } from "@/types";
 import { AxiosInstance } from "./axios"
-import { isAxiosError } from "axios";
-import { handleAPIError, headersMultipartWithToken, unknownError } from "@/utils/helpers";
+import { handleAPIError, headersMultipart } from "@/utils/helpers";
 
 const PATH = "product";
 
@@ -32,10 +31,10 @@ export const create = async (createProductDTO: CreateProductDTO, images: File[])
   
   try{
     if(createProductDTO.colorImages && createProductDTO.colorImages.length > 0){
-      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/color_images", formData, headersMultipartWithToken);
+      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/color_images", formData, headersMultipart);
       return data;
     }else {
-      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/default-images", formData, headersMultipartWithToken);
+      const { data } = await AxiosInstance.post<SuccessResponseDTO<ProductDTO>>(PATH+"/default-images", formData, headersMultipart);
       return data;
     }
   }catch(e){

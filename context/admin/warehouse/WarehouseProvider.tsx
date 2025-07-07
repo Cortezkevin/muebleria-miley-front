@@ -6,6 +6,7 @@ import { WarehouseContext, WarehouseReducer } from "./";
 import { MovementsAPI, WarehouseAPI } from "@/api";
 import toast from "react-hot-toast";
 import { MovementsDTO, WarehouseDTO, CreateInventoryMovementDTO, UpdateInventoryMovementDTO, SuccessResponseDTO } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   children: ReactElement | ReactElement[];
@@ -39,9 +40,13 @@ const Warehouse_INITIAL_STATE: WarehouseState = {
 };
 
 export const WarehouseProvider: FC<Props> = ({ children }) => {
+  const { isLogged, accessType } = useAuth();
   const [state, dispatch] = useReducer(WarehouseReducer, Warehouse_INITIAL_STATE);
 
   React.useEffect(() => {
+    if(!isLogged) return;
+    if(accessType === 'CLIENT' || accessType === 'TRANSPORT') return;
+    
     dispatch({
       type: "[Warehouse] - Loading",
       payload: true,
@@ -54,7 +59,7 @@ export const WarehouseProvider: FC<Props> = ({ children }) => {
       type: "[Warehouse] - Loading",
       payload: false,
     });
-  }, []);
+  }, [isLogged, accessType]);
 
   const loadWarehouses = async () => {
     const response = await WarehouseAPI.getAll();

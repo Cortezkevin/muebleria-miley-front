@@ -100,7 +100,6 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
   }
 
   React.useEffect(() => {
-    console.log(selectedLocality, selectedDepartamento, selectedCalle, selectedPostalCode, selectedProvincia, selectedUrbanizacion, distance)
     const selectedAddress = (selectedProvincia + (selectedLocality !== "" ? (", "+selectedLocality) : "")) + (selectedUrbanizacion !== "" ? (", "+selectedUrbanizacion) : "")  +  ( selectedCalle !== "" ? (", " + selectedCalle) : "" ); 
     onSelectDirection({
       address: {

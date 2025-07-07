@@ -1,6 +1,6 @@
 import { SubCategoryDTO, CreateSubCategoryDTO, SuccessResponseDTO, ErrorResponseDTO, UpdateSubCategoryDTO } from "@/types";
 import { AxiosInstance } from "./axios"
-import { handleAPIError, headersMultipartWithToken } from "@/utils/helpers";
+import { handleAPIError, headersMultipart } from "@/utils/helpers";
 
 const PATH = "sub-category";
 
@@ -9,7 +9,7 @@ export const create = async (newSubCategory: CreateSubCategoryDTO, image: File):
   formData.append('body', JSON.stringify(newSubCategory));
   formData.append('file', image);
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<SubCategoryDTO>>(PATH , formData, headersMultipartWithToken);
+    const { data } = await AxiosInstance.post<SuccessResponseDTO<SubCategoryDTO>>(PATH , formData, headersMultipart);
     return data;
   }catch(e){
     return handleAPIError(e);
@@ -23,7 +23,7 @@ export const update = async (updateSubCategory: UpdateSubCategoryDTO, image?: Fi
   }
   formData.append('body', JSON.stringify(updateSubCategory ));
   try{
-    const { data } = await AxiosInstance.put<SuccessResponseDTO<SubCategoryDTO>>(PATH, formData, headersMultipartWithToken);
+    const { data } = await AxiosInstance.put<SuccessResponseDTO<SubCategoryDTO>>(PATH, formData, headersMultipart);
     return data;
   }catch(e){
     return handleAPIError(e);

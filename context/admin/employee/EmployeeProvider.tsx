@@ -6,6 +6,7 @@ import { EmployeeContext, EmployeeReducer } from "./";
 import { CarrierAPI, GrocerAPI } from "@/api";
 import toast from "react-hot-toast";
 import { CarrierDTO, GrocerDTO, NewCarrierDTO, NewGrocerDTO, SuccessResponseDTO } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   children: ReactElement | ReactElement[];
@@ -39,9 +40,13 @@ const Employee_INITIAL_STATE: EmployeeState = {
 };
 
 export const EmployeeProvider: FC<Props> = ({ children }) => {
+  const { isLogged, accessType } = useAuth();
   const [state, dispatch] = useReducer(EmployeeReducer, Employee_INITIAL_STATE);
-
+  
   React.useEffect(() => {
+    if(!isLogged) return;
+    if(accessType === 'CLIENT') return;
+
     dispatch({
       type: "[Employee] - Loading",
       payload: true,
@@ -54,7 +59,7 @@ export const EmployeeProvider: FC<Props> = ({ children }) => {
       type: "[Employee] - Loading",
       payload: false,
     });
-  }, []);
+  }, [isLogged, accessType]);
 
   const loadCarriers = async () => {
     const response = await CarrierAPI.getAll();

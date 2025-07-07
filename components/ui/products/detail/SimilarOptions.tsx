@@ -11,7 +11,7 @@ interface Props {
 
 export const SimilarOptions: FC<Props> = ({ selfProduct }) => {
   const { products } = useContext(ShopContext);
-  console.log("SEIMILAR ", products)
+
   return (
     <Card className='p-4'>
         <CardHeader>

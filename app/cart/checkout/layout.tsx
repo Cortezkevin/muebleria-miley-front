@@ -21,12 +21,9 @@ export default function CartCheckoutLayout({
   const { count, subtotal, total, tax, shippingCost, discount, items } = useContext(CartContext);
   
   React.useEffect(() => {
-    console.log('PATH CHANGE',pathName);
     setStep(pathName === '/cart/checkout/address' ? 2 : pathName === '/cart/checkout/payment' ? 3 : 4);
   }, [pathName])
   
-
-  console.log("STEP: ", step);
   return (
     <div className='flex flex-col gap-6'>
       <div className='flex w-full items-center justify-between'>

@@ -6,6 +6,7 @@ import { DetailedMovementsDTO, SuccessResponseDTO } from "@/types";
 import { formatDate } from "@/utils/utils";
 import {
   Button,
+  Card,
   Chip,
   Image,
   Input,
@@ -18,8 +19,9 @@ import React from "react";
 export default function MovementDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const param = React.use(params);
   const { isAdmin } = React.useContext(AuthContext);
 
   const [movement, setMovement] = React.useState<
@@ -30,7 +32,7 @@ export default function MovementDetailPage({
 
   React.useEffect(() => {
     (async () => {
-      const response = await MovementsAPI.getById(params.id);
+      const response = await MovementsAPI.getById(param.id);
       if (response?.success) {
         const data = response as SuccessResponseDTO<DetailedMovementsDTO>;
         setMovement(data.content);
@@ -91,60 +93,60 @@ export default function MovementDetailPage({
         <div className="flex flex-col gap-2">
           <h2 className="font-semibold text-lg text-center">Stock</h2>
           <div className="flex gap-10">
-            <div className="flex flex-col bg-white p-3 rounded-lg shadow-md items-center">
+            <Card className="flex flex-col p-3 rounded-lg items-center">
               <p className="font-bold text-[40px]">{movement.initialStock}</p>
-              <p className="font-semibold text-slate-600">Stock inicial</p>
-            </div>
-            <div className="flex flex-col bg-white p-3 rounded-lg shadow-md items-center">
+              <p className="font-semibold text-default-500">Stock inicial</p>
+            </Card>
+            <Card className="flex flex-col p-3 rounded-lg items-center">
               <p className="font-bold text-[40px]">{movement.amount}</p>
-              <p className="font-semibold text-slate-600">Cantidad</p>
-            </div>
-            <div className="flex flex-col bg-white p-3 rounded-lg shadow-md items-center">
+              <p className="font-semibold text-default-500">Cantidad</p>
+            </Card>
+            <Card className="flex flex-col p-3 rounded-lg items-center">
               <p className="font-bold text-[40px]">{movement.newStock}</p>
-              <p className="font-semibold text-slate-600">Nuevo Stock</p>
-            </div>
+              <p className="font-semibold text-default-500">Nuevo Stock</p>
+            </Card>
           </div>
         </div>
         {movement.product ? (
-          <div className="flex flex-col gap-4 text-center -mt-2 bg-white py-6 px-5 shadow-md rounded-lg">
+          <Card className="flex flex-col gap-4 text-center -mt-2 py-6 px-5 rounded-lg">
             <h2 className="font-semibold text-lg mb-2">
               Detalles del Producto
             </h2>
             <div className="flex flex-col gap-3 min-w-[300px] max-w-[820px]">
               <div className="flex justify-between">
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="font-semibold text-slate-700">Nombre:</p>
-                  <p className="text-slate-600">{movement.product.name}</p>
+                  <p className="font-semibold text-default-700">Nombre:</p>
+                  <p className="text-default-600">{movement.product.name}</p>
                 </div>
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="font-semibold text-slate-700">Categoria:</p>
-                  <p className="text-slate-600">
+                  <p className="font-semibold text-default-700">Categoria:</p>
+                  <p className="text-default-600">
                     {movement.product.subcategory.category.name}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="font-semibold text-slate-700">Sub Categoria:</p>
-                  <p className="text-slate-600">
+                  <p className="font-semibold text-default-700">Sub Categoria:</p>
+                  <p className="text-default-600">
                     {movement.product.subcategory.name}
                   </p>
                 </div>
                 {movement.product.supplier && (
                   <div className="flex flex-col gap-2 items-start">
-                    <p className="font-semibold text-slate-700">Proveedor:</p>
-                    <p className="text-slate-600">
+                    <p className="font-semibold text-default-700">Proveedor:</p>
+                    <p className="text-default-600">
                       {movement.product.supplier.name}
                     </p>
                   </div>
                 )}
               </div>
               <div className="flex flex-col gap-2 items-start">
-                <p className="font-semibold text-slate-700">Descripcion:</p>
-                <p className="text-justify text-slate-600">
+                <p className="font-semibold text-default-700">Descripcion:</p>
+                <p className="text-justify text-default-600">
                   {movement.product.description}
                 </p>
               </div>
               <div className="flex w-full flex-col gap-3">
-                <p className="font-semibold text-slate-700">Imagenes:</p>
+                <p className="font-semibold text-default-700">Imagenes:</p>
                 <div className="flex justify-around">
                   {movement.product.images.map((i) => (
                     <Image
@@ -159,33 +161,33 @@ export default function MovementDetailPage({
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         ) : (
-          <div className="flex flex-col gap-4 text-center bg-white py-6 px-5 shadow-md rounded-lg">
+          <Card className="flex flex-col gap-4 text-center py-6 px-5 rounded-lg">
             <h2 className="font-semibold">Detalles del Material</h2>
             <div className="flex flex-col gap-3 min-w-[700px] max-w-[820px]">
               <div className="flex justify-between">
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="font-semibold text-slate-700">Nombre:</p>
-                  <p className="text-slate-600">{movement.rawMaterial?.name}</p>
+                  <p className="font-semibold text-default-700">Nombre:</p>
+                  <p className="text-default-600">{movement.rawMaterial?.name}</p>
                 </div>
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="font-semibold text-slate-700">Tipo de Medida:</p>
-                  <p className="text-slate-600">{movement.rawMaterial?.measurementUnit}</p>
+                  <p className="font-semibold text-default-700">Tipo de Medida:</p>
+                  <p className="text-default-600">{movement.rawMaterial?.measurementUnit}</p>
                 </div>
                 <div className="flex flex-col gap-2 items-start">
-                  <p className="font-semibold text-slate-700">Proveedor:</p>
-                  <p className="text-slate-600">
+                  <p className="font-semibold text-default-700">Proveedor:</p>
+                  <p className="text-default-600">
                     {movement.rawMaterial?.supplier}
                   </p>
                 </div>
               </div>
               <div className="flex flex-col gap-2 items-start">
-                <p className="font-semibold text-slate-700">Descripcion:</p>
-                <p className="text-slate-600">{movement.rawMaterial?.description}</p>
+                <p className="font-semibold text-default-700">Descripcion:</p>
+                <p className="text-default-600">{movement.rawMaterial?.description}</p>
               </div>
             </div>
-          </div>
+          </Card>
         )}
         <div className="flex gap-4">
           <div className="flex flex-col gap-4 text-center">

@@ -1,8 +1,7 @@
 import { CartDTO, UserDTO, JwtTokenDTO, NewUserDTO, SuccessResponseDTO, ErrorResponseDTO } from "@/types";
 import { AxiosInstance } from "./axios"
-import { isAxiosError } from "axios";
 import Cokkies from 'js-cookie';
-import { handleAPIError, unknownError } from "@/utils/helpers";
+import { handleAPIError } from "@/utils/helpers";
 const PATH = "auth/";
 
 export const login = async (email: string, password: string): Promise<SuccessResponseDTO<JwtTokenDTO> | ErrorResponseDTO> => {

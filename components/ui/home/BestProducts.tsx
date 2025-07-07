@@ -1,5 +1,4 @@
 "use client";
-import { testCategoryData, testProductData } from '@/utils/data'
 import { Tab, Tabs } from '@heroui/tabs'
 import React, { useContext } from 'react'
 import { Product } from '../';
@@ -7,17 +6,13 @@ import NextLink from 'next/link';
 import { Link } from '@heroui/link';
 import { ShopContext } from '@/context/shop';
 import { Spinner } from '@heroui/spinner';
-import { ProductDTO } from '@/types';
 
 export const BestProducts = () => {
   const { products, categories } = useContext(ShopContext);
-  const [bestProducts, setBestProducts] = React.useState<ProductDTO[]>([]);
 
   const getProdutcs = (categorySelected: string) => {
     return products.data.filter(p => p.category === categorySelected).slice(0,4);
   }
-
-  console.log(bestProducts);
 
   return (
     <div className='flex flex-col items-center gap-8'>

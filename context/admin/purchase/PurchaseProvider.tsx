@@ -6,6 +6,7 @@ import { PurchaseContext, PurchaseReducer } from "./";
 import { PurchaseOrderAPI, RawMaterialAPI, SupplierAPI } from "@/api";
 import toast from "react-hot-toast";
 import { CreatePurchaseOrderDTO, CreateRawMaterialDTO, CreateSupplierDTO, PurchaseOrderDTO, RawMaterialDTO, SuccessResponseDTO, SupplierDTO, UpdateRawMaterialDTO } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   children: ReactElement | ReactElement[];
@@ -49,9 +50,13 @@ const Purchase_INITIAL_STATE: PurchaseState = {
 };
 
 export const PurchaseProvider: FC<Props> = ({ children }) => {
+  const { isLogged, accessType } = useAuth();
   const [state, dispatch] = useReducer(PurchaseReducer, Purchase_INITIAL_STATE);
 
   React.useEffect(() => {
+    if(!isLogged) return;
+    if(accessType === "CLIENT" || accessType === 'TRANSPORT') return;
+
     dispatch({
       type: "[Purchase] - Loading",
       payload: true,
@@ -65,7 +70,7 @@ export const PurchaseProvider: FC<Props> = ({ children }) => {
       type: "[Purchase] - Loading",
       payload: false,
     });
-  }, []);
+  }, [isLogged, accessType]);
 
   const loadSuppliers = async () => {
     const response = await SupplierAPI.getAll();

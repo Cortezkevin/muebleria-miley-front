@@ -24,9 +24,8 @@ export const headersWithToken = {
   }
 }
 
-export const headersMultipartWithToken = {
+export const headersMultipart = {
   "headers": {
-    "Content-Type": "multipart/form-data",
-    "Authorization": "Bearer " + Cookies.get("token")
+    "Content-Type": "multipart/form-data"
   }
 }

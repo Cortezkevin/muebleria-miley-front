@@ -10,7 +10,6 @@ export const Content: FC<PropsWithChildren> = ({ children }) => {
 
   const path = usePathname();
 
-
   return (
     <div className={`${path.split("/")[1] === "admin" ? 'flex overflow-hidden' : 'flex-col h-screen overflow-auto'} relative flex`}>
       {

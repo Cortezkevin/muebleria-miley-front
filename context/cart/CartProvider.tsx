@@ -57,7 +57,6 @@ export default function CartProvider({ children }: { children: ReactNode }){
       });
       ( async () => {
         const response = await CartAPI.getCartFromSession( id );
-        console.log("RESPOSNE", response)
         if( response?.success ){
           const data = response as SuccessResponseDTO<CartDTO>;
           dispatch({

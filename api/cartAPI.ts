@@ -1,7 +1,7 @@
 import { AddItem, CartDTO, RemoveItem, SuccessResponseDTO, ErrorResponseDTO } from "@/types";
 import { AxiosInstance } from "./axios";
 import Cookies from 'js-cookie';
-import { handleAPIError, headersWithToken, unknownError } from "@/utils/helpers";
+import { handleAPIError, unknownError } from "@/utils/helpers";
 
 const PATH = "cart";
 
@@ -35,7 +35,7 @@ const PATH = "cart";
 
 export const addItem = async (addItem: AddItem): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<CartDTO>>(PATH + "/add", addItem , headersWithToken );
+    const { data } = await AxiosInstance.post<SuccessResponseDTO<CartDTO>>(PATH + "/add", addItem );
     return data;
   }catch(e){
     return handleAPIError(e);
@@ -44,7 +44,7 @@ export const addItem = async (addItem: AddItem): Promise<SuccessResponseDTO<Cart
 
 export const removeItem = async (removeItem: RemoveItem): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<CartDTO>>(PATH + "/remove", removeItem, headersWithToken);
+    const { data } = await AxiosInstance.post<SuccessResponseDTO<CartDTO>>(PATH + "/remove", removeItem);
     return data;
   }catch(e){
     return handleAPIError(e);
@@ -53,7 +53,7 @@ export const removeItem = async (removeItem: RemoveItem): Promise<SuccessRespons
 
 export const updateShippingCost = async (shippingCost: string, distance: number, cartId: string): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.put<SuccessResponseDTO<CartDTO>>(PATH + "/shipping", { shippingCost, distance, cartId } , headersWithToken);
+    const { data } = await AxiosInstance.put<SuccessResponseDTO<CartDTO>>(PATH + "/shipping", { shippingCost, distance, cartId });
     return data;
   }catch(e){
     return handleAPIError(e);
@@ -62,7 +62,7 @@ export const updateShippingCost = async (shippingCost: string, distance: number,
 
 export const clearCart = async (id: string): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<CartDTO>>(PATH + "/clear?cart="+id, headersWithToken);
+    const { data } = await AxiosInstance.post<SuccessResponseDTO<CartDTO>>(PATH + "/clear?cart="+id);
     return data;
   }catch(e){
     return handleAPIError(e);

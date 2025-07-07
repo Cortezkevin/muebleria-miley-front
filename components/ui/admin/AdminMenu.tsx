@@ -114,6 +114,7 @@ export const AdminMenu = () => {
                       className="w-4 h-4 bg-success-400"
                       onClick={() => {
                         if (user.roleExtraData) {
+                          console.log("ROLE FROM USER ",user)
                           onAvailableStatus(user.roleExtraData.id, "Carrier");
                         }
                       }}

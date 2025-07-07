@@ -37,8 +37,6 @@ export const Navbar = () => {
       router.push("/admin/orders");
     }
   };
-
-  console.log("CART COUNT NA", count);
   
   return (
     <HeroUINavbar maxWidth="xl"/*  position="sticky"  */className="z-[50]">

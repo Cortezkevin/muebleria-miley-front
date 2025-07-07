@@ -123,7 +123,8 @@ export default function AuthProvider({ children }: Props) {
   }
   
   const validateSession = async () => {
-    const response = await validateToken(Cookies.get("token") || '');
+    const token = Cookies.get("token") || '';
+    const response = await validateToken(token);
     if( response.success ){
       const data = response as SuccessResponseDTO<UserDTO>;
       dispatch({
@@ -134,20 +135,17 @@ export default function AuthProvider({ children }: Props) {
         }
       })
     }else {
-      /* handleLogout(); */
-      if(Cookies.get("token")){
+      if(token){
         toast.error("Sesion expirada");
       }
       dispatch({
         type: "[Auth] - Logout"
       });
-      console.log("SESION CERRADA", state.isLogged);
     }
   }
 
   const handleRegister = async (newUser: NewUserDTO) => {
     const data = await register(newUser);
-    console.log("REGISTER RESPONSE", data);
     if (data && data.success) {
       const res = data as SuccessResponseDTO<JwtTokenDTO>;
       dispatch({
@@ -221,7 +219,7 @@ export default function AuthProvider({ children }: Props) {
       toast.success(data.message);
       dispatch({
         type: "[Auth] - Saving Profile",
-        payload: true
+        payload: false
       })
       return true;
     }else {
@@ -252,6 +250,7 @@ export default function AuthProvider({ children }: Props) {
     <AuthContext.Provider
       value={{
         ...state,
+
         validateSession,
         onLogin: handleLogin,
         onLogout: handleLogout,

@@ -151,8 +151,6 @@ const RowSteps = React.forwardRef<HTMLButtonElement, RowStepsProps>(
       return colorsVars;
     }, [color, className]);
 
-    console.log("STEPPER RENDER")
-
     return (
       <nav aria-label="Progress" className="-my-4 max-w-fit overflow-x-auto py-4">
         <ol className={clsx("flex flex-row flex-nowrap gap-x-3", colors, className)}>

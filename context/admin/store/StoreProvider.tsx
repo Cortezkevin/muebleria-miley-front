@@ -23,6 +23,7 @@ import { CreateCategoryModal, UpdateCategoryModal } from "@/types/admin/category
 import { CreateSubCategoryModal, UpdateSubCategoryModal } from "@/types/admin/subcategory";
 import { CreateProductModal } from "@/types/admin/product";
 import { IUsersTableCell } from "@/app/admin/users/page";
+import { useAuth } from "@/hooks/useAuth";
 //import { IUsersTableCell } from "@/declarations/table/users";
 
 interface Props {
@@ -78,9 +79,13 @@ const STORE_INITIAL_STATE: StoreState = {
 };
 
 export function StoreProvider ({ children }: Props) {
+  const { isLogged, accessType } = useAuth();
   const [state, dispatch] = React.useReducer(StoreReducer, STORE_INITIAL_STATE);
 
   React.useEffect(() => {
+    if(!isLogged) return;
+    if(accessType === "CLIENT" || accessType === 'TRANSPORT') return;
+    
     dispatch({
       type: "[Store] - Loading",
       payload: true
@@ -117,7 +122,7 @@ export function StoreProvider ({ children }: Props) {
       type: "[Store] - Loading",
       payload: false,
     });
-  }, []);
+  }, [isLogged, accessType]);
 
   const loadUsers = async () => {
     const response = await UserAPI.getUsers();

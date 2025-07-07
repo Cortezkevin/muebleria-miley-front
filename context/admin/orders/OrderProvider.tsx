@@ -7,6 +7,7 @@ import {
   SuccessResponseDTO
 } from "@/types";
 import { OrderAPI } from "@/api";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   children: ReactElement | ReactElement[];
@@ -30,9 +31,13 @@ const ORDER_INITIAL_STATE: OrderState = {
 };
 
 export const OrderProvider: FC<Props> = ({ children }) => {
+  const { isLogged, accessType } = useAuth();
   const [state, dispatch] = React.useReducer(OrderReducer, ORDER_INITIAL_STATE);
 
   React.useEffect(() => {
+    if(!isLogged) return;
+    if(accessType === "CLIENT") return;
+    
     dispatch({
       type: "[Order] - Loading",
       payload: true,
@@ -44,7 +49,7 @@ export const OrderProvider: FC<Props> = ({ children }) => {
       type: "[Order] - Loading",
       payload: false,
     });
-  }, []);
+  }, [isLogged, accessType]);
 
   const loadOrders = async () => {
     const response = await OrderAPI.getAllOrders();
