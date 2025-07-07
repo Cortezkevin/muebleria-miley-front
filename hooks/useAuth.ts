@@ -15,11 +15,11 @@ export const useAuth  = (): Props => {
 
   return {
     ...authContext,
-    accessType: authContext.user.roles.includes("ROLE_ADMIN") 
+    accessType: authContext.roles.includes("ROLE_ADMIN") 
                 ? "ADMIN" 
-                : authContext.user.roles.includes("ROLE_WAREHOUSE")
+                : authContext.roles.includes("ROLE_WAREHOUSE")
                   ? "WAREHOUSE"
-                  : authContext.user.roles.includes("ROLE_TRANSPORT")
+                  : authContext.roles.includes("ROLE_TRANSPORT")
                     ? "TRANSPORT"
                     : "CLIENT"
   };

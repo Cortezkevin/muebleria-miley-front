@@ -11,6 +11,13 @@ export type JwtTokenDTO = {
     user: UserDTO
 }
 
+export type SessionDTO = {
+    token: string;
+    email: string;
+    photo: string;
+    roles: string[];
+}
+
 export type NewUserDTO = {
     firstName: string;
     lastName: string;

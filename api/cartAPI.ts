@@ -5,9 +5,9 @@ import { handleAPIError, unknownError } from "@/utils/helpers";
 
 const PATH = "cart";
 
-  export const getCartFromSession = async (userId: string): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
+  export const getCartFromSession = async (): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
   try {
-    const response = await fetch(`http://localhost:4000/api/cart/fromUser?user=${userId}`, {
+    const response = await fetch(`http://localhost:4000/api/cart/fromUser`, {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + Cookies.get('token'),

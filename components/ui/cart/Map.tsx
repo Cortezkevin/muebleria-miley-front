@@ -5,6 +5,7 @@ import { Input } from '@heroui/input';
 import React, { FC } from 'react'
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie'
+import { ProfileContext } from '@/context/profile';
 
 const loader = new Loader({
   apiKey: "AIzaSyCFgCKva937BK3IEE4y-jWGhvXh5DNaRIg",
@@ -24,7 +25,7 @@ type Props = {
 
 export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12.190860, lng: -76.994641 } }) => {
 
-  const { user } = React.useContext( AuthContext );
+  const { personal, address } = React.useContext( ProfileContext );
 
   const mapRef = React.useRef<HTMLDivElement>(null);
   const inputSearchRef = React.useRef<HTMLInputElement>(null);
@@ -70,11 +71,11 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
           url: "https://lh3.googleusercontent.com/ogw/AF2bZyhaEe-p9PFpFLZj0B380luL69WHPtu6SIXX93mogIzL-k4=s32-c-mo"
         },
         label: {
-          text: user ? user.firstName + "(Usted)" : "Tu",
+          text: personal ? personal.firstName + "(Usted)" : "Tu",
           className: "text-semibold text-primary flex flex-col gap-2",
           fontSize: "15px"
         },
-        title: user.firstName
+        title: personal ? personal.firstName : 'You'
       });
     }
     initMap();
@@ -103,7 +104,7 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
     const selectedAddress = (selectedProvincia + (selectedLocality !== "" ? (", "+selectedLocality) : "")) + (selectedUrbanizacion !== "" ? (", "+selectedUrbanizacion) : "")  +  ( selectedCalle !== "" ? (", " + selectedCalle) : "" ); 
     onSelectDirection({
       address: {
-        id: user.profile.address ? user.profile.address.id : "",
+        id: address ? address.id : "",
         department: selectedDepartamento,
         district: selectedLocality,
         lng: destination.lng,
@@ -146,8 +147,8 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
   }, [  ]);
 
   React.useEffect(() => {
-    if( user.profile.address ){
-      const { department, district, province, street, postalCode, urbanization } = user.profile.address;
+    if( address ){
+      const { department, district, province, street, postalCode, urbanization } = address;
       setSelectedCalle(street ? street : "");
       setSelectedDepartamento(department ? department: "");
       setSelectedLocality(district ? district : "");
@@ -168,7 +169,7 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
         resetInputs();
       }
     }
-  }, [user])
+  }, [address])
 
   function computeTotalDistance(result: google.maps.DirectionsResult) {
     let total = 0;

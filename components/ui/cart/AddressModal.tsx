@@ -7,6 +7,8 @@ import { AuthContext } from '@/context/auth';
 import Cookies from 'js-cookie';
 import { CartContext } from '@/context/cart';
 import { AddressDTO } from '@/types';
+import { ProfileContext } from '@/context/profile';
+import { useAuth } from '@/hooks/useAuth';
 
 type Props = {
   isOpen: boolean;
@@ -33,8 +35,8 @@ export const AddressModal: FC<Props> = ({ isOpen, handleOpenModal }) => {
   });
 
   const [memoryAddress, setMemoryAddress] = React.useState<AddressDTO | undefined>(undefined);
-
-  const { onUpdateAddress, onUpdateAddressMemory, user: { profile: { address } }, isLogged } = React.useContext(AuthContext);
+  const { isLogged } = useAuth();
+  const { onUpdateAddress, onUpdateAddressMemory, address } = React.useContext(ProfileContext);
   const { onChangeShippingCost, onChangeShippingCostMemory } = React.useContext(CartContext);
 
   const handleSaveAddress = () => {

@@ -7,7 +7,9 @@ type AuthAction =
   type: '[Auth] - Login',
   payload: {
     isAdmin: boolean;
-    user: UserDTO
+    email: string;
+    photo: string;
+    roles: string[]
   }
 } |
 { 
@@ -17,7 +19,11 @@ type AuthAction =
 { 
   type: '[Auth] - Saving Profile',
   payload: boolean
-} | 
+} |
+{
+  type: '[Profile] - Load Address',
+  payload: AddressDTO
+} |
 { 
   type: '[Auth] - Update Address',
   payload: AddressDTO
@@ -37,17 +43,20 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
     case '[Auth] - Available Status':
       return {
         ...state,
-        user: {
+        /* user: {
           ...state.user,
           roleExtraData: state.user.roleExtraData && undefined
-        }
+        } */
       }
     case '[Auth] - Login':
       return {
         ...state,
         isLogged: true,
         isAdmin: action.payload.isAdmin,
-        user: action.payload.user
+        email: action.payload.email,
+        photo: action.payload.photo,
+        roles: action.payload.roles,
+        isEmployee: action.payload.roles.length > 1
       };
     case '[Auth] - Saving Address':
       return {
@@ -58,13 +67,25 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
       return {
         ...state,
         isSavingAddress: false,
-        user: {
+        /* user: {
           ...state.user,
           profile: {
             ...state.user.profile,
             address: action.payload,
           }
-        }
+        } */
+      }
+    case '[Profile] - Load Address':
+      return {
+        ...state,
+        isSavingAddress: false,
+        /* user: {
+          ...state.user,
+          profile: {
+            ...state.user.profile,
+            address: action.payload,
+          }
+        } */
       }
     case '[Auth] - Saving Profile':
       return {
@@ -75,7 +96,7 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
       return {
         ...state,
         isSavingProfile: false,
-        user: {
+        /* user: {
           ...state.user,
           firstName: action.payload.firstName,
           lastName: action.payload.lastName,
@@ -85,14 +106,17 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
             phone: action.payload.profile.phone,
             birthDate: action.payload.profile.birthDate
           }
-        }
+        } */
       }
     case '[Auth] - Logout':
       return {
         ...state,
         isAdmin: false,
         isLogged: false,
-        user: {
+        email: '',
+        photo: '',
+        roles: []
+       /*  user: {
           id: "",
           email: "",
           firstName: "",
@@ -105,7 +129,7 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
             address: undefined,
             phone: ""
           }
-        }
+        } */
       }
     default:
       return state;

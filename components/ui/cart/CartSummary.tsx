@@ -6,18 +6,21 @@ import { Card } from '@heroui/card'
 import { Divider } from '@heroui/divider'
 import { Input } from '@heroui/input'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { AddressModal } from './AddressModal';
 import { AuthContext } from '@/context';
 import { AddressDTO } from '@/types';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { ProfileContext } from '@/context/profile';
 
 export const CartSummary = () => {
 
   const router = useRouter();
-  const { isLogged, user, isSavingAddress } = React.useContext(AuthContext);
-  const [direction, setDirection] = useState<AddressDTO | undefined>(user.profile.address);
+  const { isLogged } = useAuth();
+  const { address, isSavingAddress } = useContext(ProfileContext);
+  const [direction, setDirection] = useState<AddressDTO | undefined>(address);
   const [isDisableButton, setIsDisableButton] = useState(true);
   const { shippingCost, count, subtotal, total, tax, discount, items } = React.useContext(CartContext);
 
@@ -35,9 +38,9 @@ export const CartSummary = () => {
   }
 
   React.useEffect(() => {
-    if( user.profile.address ){
-      setDirection(user.profile.address);
-      setIsDisableButton(count === 0 || !user.profile.address || user.profile.address.fullAddress === "" );
+    if( address ){
+      setDirection(address);
+      setIsDisableButton(count === 0 || !address || address.fullAddress === "" );
     }else {
       const address = JSON.parse( Cookies.get("address") || "null" ) as AddressDTO;
       if( address ){
@@ -46,7 +49,7 @@ export const CartSummary = () => {
         setDirection(undefined);
       }
     }
-  }, [user, count]);
+  }, [address, count]);
 
   return (
    <Card className='flex flex-col gap-5 p-4 mt-10 '>

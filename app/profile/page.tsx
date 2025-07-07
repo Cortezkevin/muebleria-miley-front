@@ -8,6 +8,8 @@ import * as yup from "yup";
 import React from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { ProfileContext } from "@/context/profile";
+import { useAuth } from "@/hooks/useAuth";
 
 type InformationFormInputs = {
   firstName: string;
@@ -39,15 +41,13 @@ const schema = yup.object().shape({
 });
 
 export default function ProfilePage() {
+  const { photo, email, isLogged } = useAuth();
 
-  const router = useRouter();
-
-  const { user, onUpdateProfile } = React.useContext(AuthContext);
+  const { onUpdatePersonalData, personal } = React.useContext(ProfileContext);
 
   const inputPhotoRef = React.useRef<HTMLInputElement>(null);
 
-  const [image, setImage] = React.useState(user.photoUrl);
-  console.log(user,image)
+  const [image, setImage] = React.useState(photo);
 
   const [isEditing, setIsEditing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -78,18 +78,18 @@ export default function ProfilePage() {
   });
 
   React.useEffect(() => {
-    setImage(user.photoUrl);
+    setImage(photo);
     resetForm({
       values: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phone: user.profile.phone,
-        email: user.email,
-        birthdate: user.profile.birthDate,
+        firstName: personal ? personal.firstName : '',
+        lastName: personal ? personal.lastName : '',
+        phone: personal ? personal.phone : '',
+        email: email,
+        birthdate: personal ? personal.birthdate : '',
         file: undefined,
       },
     });
-  }, [user]);
+  }, [personal, email]);
 
   const handleSelectPhoto = () => {
     inputPhotoRef.current?.click();
@@ -113,17 +113,17 @@ export default function ProfilePage() {
   };
 
   const handleEditInformation = async () => {
-    if (isEditing) {
+    if (isEditing && personal) {
       if (
-        user.firstName !== values.firstName ||
-        user.lastName !== values.lastName ||
-        user.email !== values.email ||
-        user.profile.phone !== values.phone ||
-        user.profile.birthDate !== values.birthdate ||
-        image !== user.photoUrl
+        personal.firstName !== values.firstName ||
+        personal.lastName !== values.lastName ||
+        email !== values.email ||
+        personal.phone !== values.phone ||
+        personal.birthdate !== values.birthdate ||
+        image !== photo
       ) {
-        setIsLoading(true);
-        await onUpdateProfile(
+        /*setIsLoading(true);
+        await onUpdatePersonalData(
           {
             firstName: values.firstName,
             lastName: values.lastName,
@@ -139,7 +139,7 @@ export default function ProfilePage() {
         if (user.email !== values.email) {
           toast.success("Se actualizo su correo, por favor vuelva a iniciar sesion");
           router.push("/auth/login?prevPage=/profile");
-        }
+        }*/
       }
       setIsEditing(false);
     } else {
@@ -152,7 +152,7 @@ export default function ProfilePage() {
       <div className="w-[300px] h-[300px] relative rounded-full bg-white-200 flex items-center justify-center">
         <Image
           className="rounded-full shadow-lg border border-slate-300 object-cover object-center max-h-[300px]"
-          src={image}
+          src={image || 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'}
           width={300}
           height={300}
           alt="Usuario"

@@ -17,7 +17,7 @@ interface Props {
 
 export const UserSession: FC<Props> = ({ isLogged }) => {
 
-  const { isAdmin, onLogout, user } = useContext(AuthContext);
+  const { isAdmin, onLogout, email, photo } = useContext(AuthContext);
   const { onClear } = useContext(CartContext);
 
   const router = useRouter();
@@ -50,8 +50,8 @@ export const UserSession: FC<Props> = ({ isLogged }) => {
                 <User
                   as="button"
                   avatarProps={{
-                    name: user.firstName,
-                    src: user.photoUrl !== "" ? user.photoUrl : undefined,
+                    name: email,
+                    src: photo !== "" ? photo : undefined,
                   }}
                   name={undefined}
                   className="transition-transform"
@@ -61,11 +61,11 @@ export const UserSession: FC<Props> = ({ isLogged }) => {
                 <DropdownItem isReadOnly key="detail" className="h-14 gap-2">
                   <User
                     avatarProps={{
-                      name: user.firstName,
-                      src: user.photoUrl !== "" ? user.photoUrl : undefined,
+                      //name: user.firstName,
+                      src: photo !== "" ? photo : undefined,
                     }}
-                    name={user.firstName + " " + user.lastName}
-                    description={user.email}
+                    name={email}
+                    //description={user.email}
                     className="transition-transform"
                   />
                 </DropdownItem>

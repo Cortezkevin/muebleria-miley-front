@@ -2,8 +2,8 @@
 
 import { ReactElement, useEffect, useReducer, useState } from "react";
 import { AuthContext, AuthReducer } from "./";
-import { AddressDTO, CartDTO, UpdateProfileDTO, UserDTO, NewUserDTO, SuccessResponseDTO, JwtTokenDTO } from "@/types";
-import { /* addressAPI, carrierAPI, */ AddressAPI, CarrierAPI, changePassword, login, ProfileAPI, /* profileAPI, */ register, validateToken } from "@/api";
+import { AddressDTO, CartDTO, UpdateProfileDTO, UserDTO, NewUserDTO, SuccessResponseDTO, JwtTokenDTO, SessionDTO } from "@/types";
+import { /* addressAPI, carrierAPI, */ AddressAPI, AuthAPI, CarrierAPI, changePassword, login, ProfileAPI, /* profileAPI, */ register, validateToken } from "@/api";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,11 @@ export interface AuthState {
   isAdmin: boolean;
   isSavingAddress: boolean;
   isSavingProfile: boolean;
-  user: UserDTO;
+  isEmployee: boolean;
+  email: string;
+  photo: string;
+  roles: string[];
+  //user: UserDTO;
 }
 
 const name_INITIAL_STATE: AuthState = {
@@ -24,7 +28,11 @@ const name_INITIAL_STATE: AuthState = {
   isLogged: false,
   isSavingAddress: false,
   isSavingProfile: false,
-  user: {
+  isEmployee: false,
+  email: '',
+  photo: '',
+  roles: []
+  /* user: {
     id: "",
     email: "",
     firstName: "",
@@ -38,7 +46,7 @@ const name_INITIAL_STATE: AuthState = {
       phone: ""
     },
     roleExtraData: null
-  },
+  }, */
 };
 
 export default function AuthProvider({ children }: Props) {
@@ -47,8 +55,10 @@ export default function AuthProvider({ children }: Props) {
   const router = useRouter();
 
   useEffect(() => {
-    const user = JSON.parse(Cookies.get("user") || "null") as UserDTO;
+    //const user = JSON.parse(Cookies.get("user") || "null") as UserDTO;
     setIsLoadingUserData(true);
+
+    // llamar en el nuevo context de profile
     const addressMemory = JSON.parse(Cookies.get("address") || "null") as AddressDTO ;
       if(addressMemory){
         dispatch({
@@ -56,7 +66,7 @@ export default function AuthProvider({ children }: Props) {
           payload: addressMemory
         });
       }
-    if( user ){
+    /*if( user ){
       if (user !== null && user !== undefined) {
         dispatch({
           type: "[Auth] - Login",
@@ -72,30 +82,35 @@ export default function AuthProvider({ children }: Props) {
           type: "[Auth] - Logout",
         });
       }
-    }
+    }*/
     const address = JSON.parse(Cookies.get("address") || "null") as AddressDTO;
     dispatch({
       type: "[Auth] - Update Address",
       payload: address
-    })
+    });
+
+    ( async() => {
+      await validateSession();
+    })();
+
     setIsLoadingUserData(false);
   }, []);
 
   const handleLogin = async (email: string, password: string) => {
-    const data = await login(email, password);
-    if (data && data.success) {
-      const res = data as SuccessResponseDTO<JwtTokenDTO>;
+    const response = await login(email, password);
+    if (response && response.success) {
+      const data = response as SuccessResponseDTO<SessionDTO>;
       dispatch({
         type: "[Auth] - Login",
         payload: {
-          isAdmin: res.content.user.roles.includes("ROLE_ADMIN"),
-          user: res.content.user,
+          isAdmin: data.content.roles.includes("ROLE_ADMIN"),
+          ...data.content
         },
       });
       toast.success(data.message);
       return true;
     }else {
-      toast.error(data.message);
+      toast.error(response.message);
       return false;
     }
   };
@@ -131,7 +146,9 @@ export default function AuthProvider({ children }: Props) {
         type: "[Auth] - Login",
         payload: {
           isAdmin: data.content.roles.includes("ROLE_ADMIN"),
-          user: data.content
+          email: data.content.email,
+          photo: data.content.photoUrl,
+          roles: data.content.roles
         }
       })
     }else {
@@ -145,20 +162,20 @@ export default function AuthProvider({ children }: Props) {
   }
 
   const handleRegister = async (newUser: NewUserDTO) => {
-    const data = await register(newUser);
-    if (data && data.success) {
-      const res = data as SuccessResponseDTO<JwtTokenDTO>;
+    const response = await register(newUser);
+    if (response && response.success) {
+      const data = response as SuccessResponseDTO<SessionDTO>;
       dispatch({
         type: "[Auth] - Login",
         payload: {
-          isAdmin: res.content.user.roles.includes("ROLE_ADMIN"),
-          user: res.content.user,
+          isAdmin: data.content.roles.includes("ROLE_ADMIN"),
+          ...data.content
         },
       });
       toast.success(data.message);
       return true;
     }
-    toast.error(data!.message + "");
+    toast.error(response.message + "");
     return false;
   };
 

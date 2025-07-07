@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
 
-  const { isAdmin, isLogged, onLogout, user } = useContext(AuthContext);
+  const { isAdmin, isLogged, isEmployee } = useContext(AuthContext);
   const { count } = useContext(CartContext);
   const router = useRouter();
   
@@ -71,7 +71,7 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="items-center hidden gap-2 sm:flex">
-          {(isAdmin || user.roles.includes("ROLE_WAREHOUSE") || user.roles.includes("ROLE_TRANSPORT")) && (
+          {isEmployee && (
           <Button
             onPress={handleAdminAccount}
             color="primary"

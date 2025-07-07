@@ -7,3 +7,10 @@ export type UpdateProfileDTO = {
   birthdate: string;
   photoUrl: string;
 }
+
+export type PersonalDataDTO = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  birthdate: string;
+}

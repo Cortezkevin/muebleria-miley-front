@@ -43,7 +43,7 @@ const Cart_INITIAL_STATE: CartState = {
 
 export default function CartProvider({ children }: { children: ReactNode }){
 
-  const { isLogged, user: { firstName, id }, validateSession } = React.useContext( AuthContext );
+  const { isLogged, validateSession } = React.useContext( AuthContext );
   const [ state, dispatch ] = React.useReducer( CartReducer , Cart_INITIAL_STATE );
 
   React.useEffect(() => {
@@ -56,7 +56,7 @@ export default function CartProvider({ children }: { children: ReactNode }){
         type: "[Cart] - loading items"
       });
       ( async () => {
-        const response = await CartAPI.getCartFromSession( id );
+        const response = await CartAPI.getCartFromSession();
         if( response?.success ){
           const data = response as SuccessResponseDTO<CartDTO>;
           dispatch({
@@ -70,7 +70,7 @@ export default function CartProvider({ children }: { children: ReactNode }){
         });
       })();
     }
-  }, [isLogged, id]);
+  }, [isLogged]);
 
   useEffect(() => {
     if(!isLogged){

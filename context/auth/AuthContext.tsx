@@ -6,7 +6,11 @@ import { createContext } from 'react';
 export interface AuthProps {
   isLogged: boolean;
   isAdmin: boolean;
-  user: UserDTO;
+  email: string;
+  photo: string;
+  roles: string[];
+  isEmployee: boolean;
+  //user: UserDTO;
   isLoadingUserData: boolean;
   isSavingAddress: boolean;
   isSavingProfile: boolean;

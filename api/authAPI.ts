@@ -1,15 +1,15 @@
-import { CartDTO, UserDTO, JwtTokenDTO, NewUserDTO, SuccessResponseDTO, ErrorResponseDTO } from "@/types";
+import { CartDTO, UserDTO, JwtTokenDTO, NewUserDTO, SuccessResponseDTO, ErrorResponseDTO, SessionDTO } from "@/types";
 import { AxiosInstance } from "./axios"
 import Cokkies from 'js-cookie';
 import { handleAPIError } from "@/utils/helpers";
 const PATH = "auth/";
 
-export const login = async (email: string, password: string): Promise<SuccessResponseDTO<JwtTokenDTO> | ErrorResponseDTO> => {
+export const login = async (email: string, password: string): Promise<SuccessResponseDTO<SessionDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<JwtTokenDTO>>(PATH + "login", { email, password });
+    const { data } = await AxiosInstance.post<SuccessResponseDTO<SessionDTO>>(PATH + "login", { email, password });
      if( data.success ){
       Cokkies.set('token', data.content.token);
-      Cokkies.set('user',JSON.stringify(data.content.user));
+      //Cokkies.set('user',JSON.stringify(data.content.user));
       const newMemoryCart: CartDTO = {
         id: "",
         user_id : "",
@@ -32,12 +32,12 @@ export const login = async (email: string, password: string): Promise<SuccessRes
   }
 }
 
-export const register = async (newUser: NewUserDTO): Promise<SuccessResponseDTO<JwtTokenDTO> | ErrorResponseDTO> => {
+export const register = async (newUser: NewUserDTO): Promise<SuccessResponseDTO<SessionDTO> | ErrorResponseDTO> => {
   try{
-    const { data } = await AxiosInstance.post<SuccessResponseDTO<JwtTokenDTO>>(PATH + "register", newUser);
+    const { data } = await AxiosInstance.post<SuccessResponseDTO<SessionDTO>>(PATH + "register", newUser);
     if( data.success ){
       Cokkies.set('token', data.content.token);
-      Cokkies.set('user',JSON.stringify(data.content.user));
+      //Cokkies.set('user',JSON.stringify(data.content.user));
       const newMemoryCart: CartDTO = {
         id: "",
         user_id : "",
