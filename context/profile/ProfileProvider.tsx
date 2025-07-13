@@ -44,7 +44,6 @@ export default function ProfileProvider({ children }: Props) {
         });
       }
     }else {
-      console.log("USER IS LOGGED");
       (async() => {
         await loadAddress();
         await loadPersonalData();

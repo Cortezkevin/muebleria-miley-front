@@ -8,7 +8,6 @@ export function middleware(req: NextRequest) {
     case "/admin/users":
     case "/admin/category":
     case "/admin/sub-category":
-    case "/admin/collection":
       return validateRoleAdmin(req);
     case "/admin/material":
     case "/admin/movements":

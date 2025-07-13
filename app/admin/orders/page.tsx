@@ -2,6 +2,7 @@
 import { DataTable, DataTableModalProps, UserModal } from "@/components/ui";
 import { OrderContext } from "@/context/admin";
 import { AuthContext } from "@/context/auth";
+import { useAuth } from "@/hooks/useAuth";
 import {
   OrderStatus,
   PaymentMethod,
@@ -74,7 +75,7 @@ const columns: IOrderTableColumn[] = [
 export default function OrdersPage() {
   const router = useRouter();
 
-  const { user } = React.useContext(AuthContext);
+  const { roles } = useAuth();
 
   const {
     order: { orders },
@@ -216,7 +217,7 @@ export default function OrdersPage() {
     <div className="w-full h-[100vh] flex flex-col gap-6 overflow-auto animate__animated animate__fadeIn animate__fast">
       <div className="flex justify-between items-center">
         <h1 className="text-large font-semibold">Pedidos</h1>
-        {user.roles.includes("ROLE_WAREHOUSE") ? (
+        {roles.includes("ROLE_WAREHOUSE") ? (
           <Button
             onClick={handleShowPreparationPendingOrders}
             color="primary"
@@ -224,7 +225,7 @@ export default function OrdersPage() {
           >
             Ver Pedidos a preparar
           </Button>
-        ) : user.roles.includes("ROLE_TRANSPORT") ? (
+        ) : roles.includes("ROLE_TRANSPORT") ? (
           <Button
             onClick={handleShowShippingPendingOrders}
             color="primary"

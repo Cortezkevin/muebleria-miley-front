@@ -41,7 +41,7 @@ const schema = yup.object().shape({
 });
 
 export default function ProfilePage() {
-  const { photo, email, isLogged } = useAuth();
+  const { photo, email, userId } = useAuth();
 
   const { onUpdatePersonalData, personal } = React.useContext(ProfileContext);
 
@@ -79,7 +79,8 @@ export default function ProfilePage() {
 
   React.useEffect(() => {
     setImage(photo);
-    resetForm({
+    if(personal) {
+      resetForm({
       values: {
         firstName: personal ? personal.firstName : '',
         lastName: personal ? personal.lastName : '',
@@ -89,6 +90,7 @@ export default function ProfilePage() {
         file: undefined,
       },
     });
+    }
   }, [personal, email]);
 
   const handleSelectPhoto = () => {
@@ -113,7 +115,7 @@ export default function ProfilePage() {
   };
 
   const handleEditInformation = async () => {
-    if (isEditing && personal) {
+    if (isEditing && personal && userId) {
       if (
         personal.firstName !== values.firstName ||
         personal.lastName !== values.lastName ||
@@ -122,24 +124,24 @@ export default function ProfilePage() {
         personal.birthdate !== values.birthdate ||
         image !== photo
       ) {
-        /*setIsLoading(true);
+        setIsLoading(true);
         await onUpdatePersonalData(
           {
             firstName: values.firstName,
             lastName: values.lastName,
             phone: values.phone,
             email: values.email,
-            userId: user.id,
+            userId,
             birthdate: values.birthdate,
             photoUrl: ""
           },
           values.file
         );
         setIsLoading(false);
-        if (user.email !== values.email) {
+        /* if (user.email !== values.email) {
           toast.success("Se actualizo su correo, por favor vuelva a iniciar sesion");
           router.push("/auth/login?prevPage=/profile");
-        }*/
+        } */
       }
       setIsEditing(false);
     } else {

@@ -1,7 +1,7 @@
 "use client";
 import { OrderAPI } from "@/api";
 import { OrderContext } from "@/context/admin";
-import { AuthContext } from "@/context/auth";
+import { useAuth } from "@/hooks/useAuth";
 import {
   CarrierDTO,
   ShippingOrderDTO,
@@ -92,7 +92,7 @@ const columns: IShippingOrderTableColumn[] = [
 export default function ShippingOrdersPage() {
   const router = useRouter();
 
-  const { user, validateSession } = React.useContext(AuthContext);
+  const { userId, roleExtraData, validateSession } = useAuth();
   const { loadOrders } = React.useContext(OrderContext);
 
   const [shippingOrders, setShippingOrders] = React.useState<ShippingOrderDTO[]>(
@@ -216,7 +216,7 @@ export default function ShippingOrdersPage() {
           </Chip>
         );
       case "actions":
-        return item.userIdFromCarrier === user.id &&
+        return item.userIdFromCarrier === userId &&
           item.status !== "PENDIENTE" ? (
           <Button
             className="text-white"
@@ -250,8 +250,8 @@ export default function ShippingOrdersPage() {
                 }
               }}
               isDisabled={
-                (user.roleExtraData
-                  ? (user.roleExtraData as CarrierDTO).status !== "DISPONIBLE"
+                (roleExtraData
+                  ? (roleExtraData as CarrierDTO).status !== "DISPONIBLE"
                   : false)
               }
             >
@@ -266,16 +266,18 @@ export default function ShippingOrdersPage() {
   };
 
   const handleStartPreparation = async (id: string, orderId: string) => {
-    const response = await OrderAPI.startShippingOrder({
+    if(userId){
+      const response = await OrderAPI.startShippingOrder({
       orderId,
-      userId: user.id,
-    });
-    if (response?.success) {
-      toast.success(response.message);
-      loadOrders();
-      router.push("/admin/orders/shipping/" + id);
-    } else {
-      toast.error(response?.message);
+      userId,
+      });
+      if (response?.success) {
+        toast.success(response.message);
+        loadOrders();
+        router.push("/admin/orders/shipping/" + id);
+      } else {
+        toast.error(response?.message);
+      }
     }
   };
 
@@ -284,6 +286,14 @@ export default function ShippingOrdersPage() {
       <h1 className="text-large font-semibold">
         Pedidos Pendientes para Entregar
       </h1>
+      <div>
+        <div className="flex gap-3">
+          <Chip size="lg" variant="dot" color="primary">Disponibles</Chip>
+          <Chip size="lg" variant="dot" color="success">Completados por ti</Chip>
+          <Chip size="lg" variant="dot" color="warning">Completados por otro</Chip>
+          <Chip size="lg" variant="dot" color="danger">Anulados o por Terminar</Chip>
+        </div>
+      </div>
       <Table
         aria-label="Example table with client side pagination"
         isStriped

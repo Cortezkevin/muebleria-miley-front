@@ -17,4 +17,5 @@ export * as CarrierAPI from './carrierAPI';
 export * as WarehouseAPI from './warehouseAPI';
 export * as MovementsAPI from './movementsAPI';
 export * as PurchaseOrderReceptionAPI from './purchaseOrderReceptionAPI';
+export * as DashboardAPI from './dashboardAPI';
 export * as AuthAPI from './authAPI';

@@ -1,4 +1,3 @@
-import { AdminMenu } from "@/components/ui/admin/AdminMenu";
 import AdminProviders from "@/context/AppProviders";
 import { Metadata } from "next";
 

@@ -1,5 +1,6 @@
 import { AuthContext, StoreContext } from "@/context";
 import { PurchaseContext } from "@/context/admin/purchase";
+import { useAuth } from "@/hooks/useAuth";
 import {
   ProductDTO,
   RawMaterialDTO,
@@ -60,7 +61,7 @@ export function PurchaseOrderModal({ handleOpenModal, isOpen }: Props) {
     product: { products },
   } = React.useContext(StoreContext);
 
-  const { user } = React.useContext(AuthContext);
+  const { userId } = useAuth();
 
   const [selectedProduct, setSelectedProduct] = React.useState<
     ProductDTO | undefined
@@ -104,7 +105,7 @@ export function PurchaseOrderModal({ handleOpenModal, isOpen }: Props) {
       {
         details: values.details,
         supplierId: values.supplier,
-        userId: user.id,
+        userId: userId!,
       },
       () => {
         handleOpenModal(false);

@@ -14,6 +14,7 @@ export interface EmployeeProps {
     loading: boolean;
     selected: CarrierDTO | null;
   };
+
   loadingData: boolean;
 
   loadCarriers: () => void;

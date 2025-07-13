@@ -15,6 +15,18 @@ import { OrderContext } from "@/context/admin";
 import { Utils } from "@/utils";
 import { useRouter } from "next/navigation";
 import { OrderDetail } from "@/components/ui";
+import { RxStomp, RxStompConfig } from "@stomp/rx-stomp";
+import { map } from 'rxjs'
+
+const rxStompConfig: RxStompConfig = {
+  brokerURL: 'ws://localhost:4000/socket',
+  debug: (msg: string) => {
+    console.log(new Date(), msg)
+  },
+  heartbeatIncoming: 0,
+  heartbeatOutgoing: 20000,
+  reconnectDelay: 200,
+}
 
 export default function OrderShippingPage({
   params,
@@ -26,6 +38,9 @@ export default function OrderShippingPage({
   const { loadOrders } = React.useContext(OrderContext);
   const router = useRouter();
 
+  const rxStompRef = React.useRef(new RxStomp());
+  const rxStomp = rxStompRef.current;
+
   const [orderShipping, setOrderShipping] = React.useState<
     DetailedShippingOrderDTO | undefined
   >();
@@ -33,7 +48,27 @@ export default function OrderShippingPage({
   React.useEffect(() => {
     validateSession();
   },[]);
+/* PASO REALIZADO POR EL APLICATIVO MOVIL
+  React.useEffect(() => {
+    rxStomp.configure(rxStompConfig)
+    rxStomp.activate()
+    let interval: any;
+    if(orderShipping && orderShipping.status === 'EN_TRANSITO'){
+      interval = setInterval(() => {
+      rxStomp.publish({ destination: "/app/location", body: JSON.stringify({
+          lta: 145124.02153,
+          lng: 2246.12468,
+          carrier: "Jose Perez"
+        })})
+      }, 5000)
+    }
 
+    return () => { 
+      rxStomp.deactivate() 
+      clearInterval(interval);
+    }
+  })
+*/
   React.useEffect(() => {
     (async () => {
       const response = await OrderAPI.getShippingOrder(param.id);
@@ -94,7 +129,7 @@ export default function OrderShippingPage({
           }
         })();
         return;
-      case "EN_TRANSITO":
+      /*case "EN_TRANSITO":
         (async () => {
           const response = await OrderAPI.completeShippingOrder({
             orderShippingId: orderShipping.id,
@@ -112,7 +147,7 @@ export default function OrderShippingPage({
             toast.error(response?.message || "Ocurrio un error");
           }
         })();
-        return;
+        return;*/
       default: {
         return;
       }
@@ -275,7 +310,8 @@ export default function OrderShippingPage({
         <Button
           isDisabled={
             orderShipping.order.status === "ANULADO" ||
-            orderShipping.status === "ENTREGADO"
+            orderShipping.status === "ENTREGADO" ||
+            orderShipping.status === "PREPARADO"
           }
           color="primary"
           size="lg"
@@ -290,6 +326,13 @@ export default function OrderShippingPage({
               : "Completar"
             : "Proceso Completado"}
         </Button>
+
+        {
+          orderShipping.status === "PREPARADO"
+          && <span className="font-semibold">
+            Continua el proceso desde el aplicativo movil.
+          </span>
+        }
       </div>
     </div>
   );

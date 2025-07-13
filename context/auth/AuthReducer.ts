@@ -1,5 +1,5 @@
 "use client";
-import { AddressDTO, UpdateProfileDTO, UserDTO } from '@/types';
+import { CarrierDTO, GrocerDTO } from '@/types';
 import { AuthState } from './'
 
 type AuthAction = 
@@ -9,28 +9,13 @@ type AuthAction =
     isAdmin: boolean;
     email: string;
     photo: string;
-    roles: string[]
+    roles: string[];
+    id: string;
   }
 } |
-{ 
-  type: '[Auth] - Saving Address',
-  payload: boolean
-} | 
-{ 
-  type: '[Auth] - Saving Profile',
-  payload: boolean
-} |
 {
-  type: '[Profile] - Load Address',
-  payload: AddressDTO
-} |
-{ 
-  type: '[Auth] - Update Address',
-  payload: AddressDTO
-} |
-{
-  type: '[Auth] - Update Profile',
-  payload: UserDTO
+  type: "[Auth] - Load Extra Role Data",
+  payload: GrocerDTO | CarrierDTO
 } |
 {
   type: "[Auth] - Logout"
@@ -48,6 +33,11 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
           roleExtraData: state.user.roleExtraData && undefined
         } */
       }
+    case '[Auth] - Load Extra Role Data':
+      return {
+        ...state,
+        roleExtraData: action.payload
+      }
     case '[Auth] - Login':
       return {
         ...state,
@@ -56,58 +46,9 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
         email: action.payload.email,
         photo: action.payload.photo,
         roles: action.payload.roles,
+        userId: action.payload.id,
         isEmployee: action.payload.roles.length > 1
       };
-    case '[Auth] - Saving Address':
-      return {
-        ...state,
-        isSavingAddress: action.payload
-      }
-    case '[Auth] - Update Address':
-      return {
-        ...state,
-        isSavingAddress: false,
-        /* user: {
-          ...state.user,
-          profile: {
-            ...state.user.profile,
-            address: action.payload,
-          }
-        } */
-      }
-    case '[Profile] - Load Address':
-      return {
-        ...state,
-        isSavingAddress: false,
-        /* user: {
-          ...state.user,
-          profile: {
-            ...state.user.profile,
-            address: action.payload,
-          }
-        } */
-      }
-    case '[Auth] - Saving Profile':
-      return {
-        ...state,
-        isSavingProfile: action.payload
-      }
-    case '[Auth] - Update Profile':
-      return {
-        ...state,
-        isSavingProfile: false,
-        /* user: {
-          ...state.user,
-          firstName: action.payload.firstName,
-          lastName: action.payload.lastName,
-          photoUrl: action.payload.photoUrl,
-          profile: {
-            ...state.user.profile,
-            phone: action.payload.profile.phone,
-            birthDate: action.payload.profile.birthDate
-          }
-        } */
-      }
     case '[Auth] - Logout':
       return {
         ...state,
@@ -116,20 +57,6 @@ export const AuthReducer = ( state: AuthState, action: AuthAction ): AuthState =
         email: '',
         photo: '',
         roles: []
-       /*  user: {
-          id: "",
-          email: "",
-          firstName: "",
-          lastName: "",
-          photoUrl: "https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg",
-          roles: [],
-          status: "ACTIVO",
-          profile: {
-            birthDate: "",
-            address: undefined,
-            phone: ""
-          }
-        } */
       }
     default:
       return state;

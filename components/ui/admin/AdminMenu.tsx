@@ -11,10 +11,13 @@ import { Divider } from "@heroui/divider";
 import { Listbox, ListboxItem, ListboxSection } from "@heroui/listbox";
 import { Tooltip } from "@heroui/tooltip";
 import { CarrierDTO } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
+import { ProfileContext } from "@/context/profile";
 
 export const AdminMenu = () => {
   const router = useRouter();
-  const { user, onLogout, onAvailableStatus } = useContext(AuthContext);
+  const { onLogout, roleExtraData, photo, email, roles, onAvailableStatus } = useAuth();
+  const { personal } = useContext(ProfileContext);
   const pathname = usePathname();
 
   const handleLogout = () => {
@@ -55,29 +58,29 @@ export const AdminMenu = () => {
               as="button"
               avatarProps={{
                 isBordered: true,
-                color: user.roleExtraData
-                  ? user.roleExtraData.status === "DISPONIBLE"
+                color: roleExtraData
+                  ? roleExtraData.status === "DISPONIBLE"
                     ? "success"
-                    : user.roleExtraData.status === "EN_ENTREGA" ||
-                      user.roleExtraData.status === "EN_RUTA"
+                    : roleExtraData.status === "EN_ENTREGA" ||
+                      roleExtraData.status === "EN_RUTA"
                     ? "warning"
                     : "danger"
                   : undefined,
-                name: user.firstName,
-                src: user.photoUrl !== "" ? user.photoUrl : undefined,
+                name: personal ? personal.firstName : "Cargando...",
+                src: photo !== "" ? photo : undefined,
                 size: "md",
               }}
               className="transition-transform w-full animate__animated animate__fadeInLeft animate__slow"
               description={
                 <p className="text-xs">
-                  {user.roles.includes("ROLE_ADMIN")
+                  {roles.includes("ROLE_ADMIN")
                     ? "Administrador"
-                    : user.roles.includes("ROLE_WAREHOUSE")
+                    : roles.includes("ROLE_WAREHOUSE")
                     ? `Almacenero`
                     : `Repartidor`}
                 </p>
               }
-              name={user.firstName + " " + user.lastName}
+              name={personal ? (personal.firstName + " " + personal.lastName) : "Cargando..."}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -87,17 +90,17 @@ export const AdminMenu = () => {
               className="text-center font-semibold "
             >
               <p className="font-semibold">
-                {user.roleExtraData &&
-                  user.roleExtraData.status.replaceAll("_", " ")}
+                {roleExtraData &&
+                  roleExtraData.status.replaceAll("_", " ")}
               </p>
             </DropdownItem>
             <DropdownItem
               key="Estado"
               isReadOnly
               className={
-                user.roleExtraData &&
-                !!(user.roleExtraData as CarrierDTO).plateCode &&
-                user.roleExtraData?.status === "EN_DESCANSO"
+                roleExtraData &&
+                !!(roleExtraData as CarrierDTO).plateCode &&
+                roleExtraData?.status === "EN_DESCANSO"
                   ? ""
                   : "hidden"
               }
@@ -113,9 +116,8 @@ export const AdminMenu = () => {
                     <div
                       className="w-4 h-4 bg-success-400"
                       onClick={() => {
-                        if (user.roleExtraData) {
-                          console.log("ROLE FROM USER ",user)
-                          onAvailableStatus(user.roleExtraData.id, "Carrier");
+                        if (roleExtraData) {
+                          onAvailableStatus(roleExtraData.id, "Carrier");
                         }
                       }}
                     ></div>
@@ -168,7 +170,7 @@ export const AdminMenu = () => {
                 shouldHighlightOnFocus
                 textValue="Usuarios"
                 className={`text-default-500 ${
-                  user.roles.includes("ROLE_ADMIN") ? "" : "hidden"
+                  roles.includes("ROLE_ADMIN") ? "" : "hidden"
                 }`}
                 startContent={<i className="fa-solid fa-users"></i>}
               >
@@ -183,7 +185,7 @@ export const AdminMenu = () => {
                 shouldHighlightOnFocus
                 textValue="Categorias"
                 className={`text-default-500 ${
-                  user.roles.includes("ROLE_ADMIN") ? "" : "hidden"
+                  roles.includes("ROLE_ADMIN") ? "" : "hidden"
                 }`}
                 startContent={<i className="fa-solid fa-layer-group"></i>}
               >
@@ -198,7 +200,7 @@ export const AdminMenu = () => {
                 shouldHighlightOnFocus
                 textValue="SubCategorias"
                 className={`text-default-500 ${
-                  user.roles.includes("ROLE_ADMIN") ? "" : "hidden"
+                  roles.includes("ROLE_ADMIN") ? "" : "hidden"
                 }`}
                 startContent={<i className="fa-solid fa-list"></i>}
               >
@@ -269,7 +271,7 @@ export const AdminMenu = () => {
               </ListboxItem>
             </ListboxSection>
             <ListboxSection title="Compras" showDivider className={`text-slate-600 ${
-                  user.roles.includes("ROLE_ADMIN") ? "" : user.roles.includes("ROLE_WAREHOUSE") ? "" : "hidden"
+                  roles.includes("ROLE_ADMIN") ? "" : roles.includes("ROLE_WAREHOUSE") ? "" : "hidden"
                 }`}>
               <ListboxItem
                 key="Proveedores"
@@ -314,7 +316,7 @@ export const AdminMenu = () => {
               </ListboxItem>
             </ListboxSection>
             <ListboxSection title="Almacen" showDivider className={`text-slate-600 ${
-                  user.roles.includes("ROLE_ADMIN") ? "" : user.roles.includes("ROLE_WAREHOUSE") ? "" : "hidden"
+                  roles.includes("ROLE_ADMIN") ? "" : roles.includes("ROLE_WAREHOUSE") ? "" : "hidden"
                 }`}>
               <ListboxItem
                 key="Almacenes"

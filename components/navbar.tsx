@@ -23,11 +23,14 @@ import { CartContext } from "@/context/cart";
 import { Button } from "@heroui/button";
 import { AuthContext } from "@/context/auth";
 import { useRouter } from "next/navigation";
+import { NotificationsButton } from "./ui/home/NotificationsButton";
+import { NotificationContext } from "@/context/admin/notifications";
 
 export const Navbar = () => {
 
   const { isAdmin, isLogged, isEmployee } = useContext(AuthContext);
   const { count } = useContext(CartContext);
+  const { count: notificationsCount } = useContext(NotificationContext);
   const router = useRouter();
   
   const handleAdminAccount = () => {
@@ -70,7 +73,7 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem className="items-center hidden gap-2 sm:flex">
+        <NavbarItem className="items-center hidden gap-4 sm:flex">
           {isEmployee && (
           <Button
             onPress={handleAdminAccount}
@@ -83,6 +86,7 @@ export const Navbar = () => {
         )}
           <UserSession isLogged={isLogged} />
           <ShoppingCartButton cartItemsCount={count}/>
+          <NotificationsButton notificationsCount={notificationsCount} />
           <ThemeSwitch />
         </NavbarItem>
       </NavbarContent>

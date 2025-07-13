@@ -1,12 +1,14 @@
 "use client";
 import { AuthContext } from '@/context'
+import { ProfileContext } from '@/context/profile';
+import { useAuth } from '@/hooks/useAuth';
 import { AddressDTO } from '@/types'
 import { Button } from '@heroui/button'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import { Input, Textarea } from '@heroui/input'
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import React, { useContext } from 'react'
 import * as yup from "yup";
 
 type ExtraData = {
@@ -22,7 +24,8 @@ const phoneSchema = yup
 
 
 const CartAddress = () => {
-  const { user, onUpdateProfile, isSavingProfile } = React.useContext(AuthContext);
+  const { userId, email } = useAuth();
+  const { onUpdatePersonalData, isSavingPersonalData, personal, address: userAddress } = useContext(ProfileContext);
   const [phoneTouched, setPhoneTouched] = React.useState(false);
   const [phoneError, setPhoneError] = React.useState("");
    const [isValidPhone, setIsValidPhone] = React.useState(false);
@@ -40,7 +43,7 @@ const CartAddress = () => {
   });
 
   const [extraData, setExtraData] = React.useState<ExtraData>({
-    phone: user.profile.phone || "",
+    phone: personal ? personal.phone : "",
     specificAddress: "",
     note: "",
   });
@@ -54,13 +57,13 @@ const CartAddress = () => {
   const router = useRouter();
 
   React.useEffect(() => {
-    if( user && user.profile.phone ){
-      if( user.profile.phone.length > 0 ){
+    if( userId && personal && personal.phone ){
+      if( personal.phone.length > 0 ){
         setIsValidPhone( true );
       }
-      setExtraData(prev => ({ ...prev, phone: user.profile.phone }));
+      setExtraData(prev => ({ ...prev, phone: personal.phone }));
     }
-  },[ user ])
+  },[ userId, personal ])
 
   React.useEffect(() => {
     if (phoneTouched) {
@@ -69,10 +72,10 @@ const CartAddress = () => {
   }, [extraData.phone]);
 
   React.useEffect(() => {
-    if (user.profile.address) {
-      setAddress(user.profile.address);
+    if (userAddress) {
+      setAddress(userAddress);
     }
-  }, [user.profile.address])
+  }, [userAddress])
 
   const validatePhone = () => {
     phoneSchema
@@ -89,7 +92,7 @@ const CartAddress = () => {
   };
 
   const handleContinueOrder = async () => {
-    if (extraData.phone !== "") {
+    if (userId && personal && extraData.phone !== "") {
       Cookies.set(
         "extraOrderData",
         JSON.stringify({
@@ -97,13 +100,13 @@ const CartAddress = () => {
           note: extraData.note,
         })
       );
-      const result = await onUpdateProfile({
-        userId: user.id,
-        birthdate: user.profile.birthDate,
-        firstName: user.firstName,
-        lastName: user.lastName,
+      const result = await onUpdatePersonalData({
+        userId,
+        birthdate: personal.birthdate,
+        firstName: personal.firstName,
+        lastName: personal.lastName,
         phone: extraData.phone,
-        email: user.email,
+        email: email,
         photoUrl: ""
       });
       if( result ){
@@ -148,7 +151,7 @@ const CartAddress = () => {
               isInvalid={!isValidPhone && phoneTouched}
               onFocus={() => setPhoneTouched(true)}
               onBlur={validatePhone}
-              readOnly={user.profile.phone !== ""}
+              readOnly={personal && personal.phone !== ""}
             />
           </div>
           <Textarea 
@@ -159,12 +162,13 @@ const CartAddress = () => {
           />
           <Button 
             isDisabled={!isValidPhone}
-            isLoading={isSavingProfile}
+            isLoading={isSavingPersonalData}
             onPress={handleContinueOrder}
             size='lg'
             >
             Continuar
           </Button>
+          <span className='text-default-600 text-xs text-center'>Completa todos los campos requeridos para continuar</span>
         </form>
       </CardBody>
     </Card>

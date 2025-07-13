@@ -1,4 +1,5 @@
 export * from './category';
+export * from './dashboard';
 export * from './movements';
 export * from './product';
 export * from './purchaseOrder';

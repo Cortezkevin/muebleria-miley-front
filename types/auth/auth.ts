@@ -16,6 +16,7 @@ export type SessionDTO = {
     email: string;
     photo: string;
     roles: string[];
+    id: string;
 }
 
 export type NewUserDTO = {

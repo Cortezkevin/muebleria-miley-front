@@ -169,7 +169,7 @@ export const Map: FC<Props> = ({ onSelectDirection, initDestination = { lat: -12
         resetInputs();
       }
     }
-  }, [address])
+  }, [address]) 
 
   function computeTotalDistance(result: google.maps.DirectionsResult) {
     let total = 0;

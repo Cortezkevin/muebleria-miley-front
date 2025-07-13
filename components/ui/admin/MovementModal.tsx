@@ -24,6 +24,7 @@ import { Tooltip } from "@heroui/react";
 import { Table } from "./Table";
 import { WarehouseContext } from "@/context/admin/warehouse";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 type Props = {
   handleOpenModal: (isOpen: boolean) => void;
@@ -68,8 +69,8 @@ export function MovementModal({ handleOpenModal, isOpen }: Props) {
   } = React.useContext(PurchaseContext);
 
   const {
-    user: { roleExtraData, roles },
-  } = React.useContext(AuthContext);
+    roleExtraData, roles
+  } = useAuth();
 
   const {
     warehouse: { warehouses },

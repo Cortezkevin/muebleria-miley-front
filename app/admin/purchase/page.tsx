@@ -4,6 +4,7 @@ import { DataTable, DataTableModalProps } from "@/components/ui";
 import { PurchaseOrderModal } from "@/components/ui/admin/PurchaseOrderModal";
 import { AuthContext } from "@/context";
 import { PurchaseContext } from "@/context/admin/purchase";
+import { useAuth } from "@/hooks/useAuth";
 import {
   PurchaseOrderDTO,
   PurchaseOrderStatus,
@@ -65,7 +66,8 @@ export default function SupplierPage() {
     loadingData,
     onSelectPurchaseOrder,
   } = React.useContext(PurchaseContext);
-  const { isAdmin, user } = React.useContext(AuthContext);
+
+  const { isAdmin, roles } = useAuth();
   const router = useRouter();
 
   console.log("DATA: ", supplier, purchaseOrders);
@@ -160,7 +162,7 @@ export default function SupplierPage() {
       <div className="flex justify-between">
         <h1 className="text-large font-semibold">Ordenes de Compra</h1>
         <div>
-          {user.roles.includes("ROLE_WAREHOUSE") ? (
+          {roles.includes("ROLE_WAREHOUSE") ? (
             <Button
               onClick={handleShowReceptionPendingOrders}
               color="primary"

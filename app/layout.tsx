@@ -13,6 +13,7 @@ import AppProviders from "@/context/AppProviders";
 import { Toaster } from "react-hot-toast";
 import { AdminMenu } from "@/components/ui/admin/AdminMenu";
 import { Content } from "@/components/ui/Content";
+  
 
 export const metadata: Metadata = {
   title: {
@@ -32,11 +33,25 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+/*
+    const authIdToken = (await headers()).get('Authorization')?.split('Bearer ')[1];
+
+    // Initialize the FirebaseServerApp instance.
+    const serverApp = initializeServerApp(firebaseConfig, { authIdToken });
+
+    // Initialize Firebase Authentication using the FirebaseServerApp instance.
+    const auth = getAuth(serverApp);
+
+    if (auth.currentUser) {
+        redirect('/profile');
+    }
+*/
   return (
     <html suppressHydrationWarning lang="en">
       <head>

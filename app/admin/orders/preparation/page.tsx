@@ -2,6 +2,7 @@
 import { OrderAPI } from "@/api";
 import { OrderContext } from "@/context/admin";
 import { AuthContext } from "@/context/auth";
+import { useAuth } from "@/hooks/useAuth";
 import {
   PreparationOrderDTO,
   OrderStatus,
@@ -79,7 +80,7 @@ const columns: IPreparationOrderTableColumn[] = [
 export default function PreparationOrdersPage() {
   const router = useRouter();
 
-  const { user, isAdmin, validateSession } = React.useContext(AuthContext);
+  const { userId, roleExtraData, isAdmin, validateSession } = useAuth();
   const { loadOrders } = React.useContext(OrderContext);
 
   const [preparationOrders, setPreparationOrders] = React.useState<
@@ -184,7 +185,7 @@ export default function PreparationOrdersPage() {
           </Chip>
         );
       case "actions":
-        return (item.userIdFromGrocer === user.id &&
+        return (item.userIdFromGrocer === userId &&
           item.status !== "PENDIENTE") ||
           isAdmin ? (
           <Button
@@ -224,8 +225,8 @@ export default function PreparationOrdersPage() {
             isDisabled={
               item.status === "LISTO_PARA_RECOGER"
               ? false
-              : user.roleExtraData
-              ? (user.roleExtraData as GrocerDTO).status !== "DISPONIBLE"
+              : roleExtraData
+              ? (roleExtraData as GrocerDTO).status !== "DISPONIBLE"
               : false
             }
           >
@@ -242,16 +243,18 @@ export default function PreparationOrdersPage() {
   };
 
   const handleStartPreparation = async (id: string, orderId: string) => {
-    const response = await OrderAPI.startPreparationOrder({
+    if(userId){
+      const response = await OrderAPI.startPreparationOrder({
       orderId,
-      userId: user.id,
-    });
-    if (response?.success) {
-      toast.success(response.message);
-      loadOrders();
-      router.push("/admin/orders/preparation/" + id);
-    } else {
-      toast.error(response?.message || "Ocurrio un error");
+      userId,
+      });
+      if (response?.success) {
+        toast.success(response.message);
+        loadOrders();
+        router.push("/admin/orders/preparation/" + id);
+      } else {
+        toast.error(response?.message || "Ocurrio un error");
+      }
     }
   };
 
@@ -260,6 +263,14 @@ export default function PreparationOrdersPage() {
       <h1 className="text-large font-semibold">
         Pedidos Pendientes para Preparar
       </h1>
+      <div>
+        <div className="flex gap-3">
+          <Chip size="lg" variant="dot" color="primary">Disponibles</Chip>
+          <Chip size="lg" variant="dot" color="success">Completados por ti</Chip>
+          <Chip size="lg" variant="dot" color="warning">Completados por otro</Chip>
+          <Chip size="lg" variant="dot" color="danger">Anulados o por Terminar</Chip>
+        </div>
+      </div>
       <Table
         aria-label="Example table with client side pagination"
         isStriped

@@ -7,7 +7,7 @@ const PATH = "cart";
 
   export const getCartFromSession = async (): Promise<SuccessResponseDTO<CartDTO> | ErrorResponseDTO> => {
   try {
-    const response = await fetch(`http://localhost:4000/api/cart/fromUser`, {
+    const response = await fetch(`http://localhost:4000/api/cart/fromSession`, {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + Cookies.get('token'),

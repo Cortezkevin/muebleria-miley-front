@@ -7,19 +7,18 @@ import {
 import { Button } from "@heroui/button";
 import toast from "react-hot-toast";
 import { CartContext } from "@/context/cart";
-import { Image } from "@heroui/image";
-import { AuthContext } from "@/context/auth";
 import Cookies from 'js-cookie';
 import { StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { CancelPaymentProcessModal } from "./CancelPaymentProcessModal";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 type Props = {
   intentId: string;
 }
 
 export const PaymentForm: FC<Props> = ({ intentId }) => {
-  const { user } = React.useContext(AuthContext);
+  const {userId} = useAuth();
   const { total, onClear, id } = React.useContext(CartContext);
   const [isSuccessPayment, setIsSuccessPayment] = React.useState(false);
   const router = useRouter();
@@ -39,7 +38,7 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if( user.id ){
+    if( userId ){
       if (!stripe || !elements) {
         toast.error("Ocurrio un error al procesar su Pago");
         return;
@@ -49,9 +48,9 @@ export const PaymentForm: FC<Props> = ({ intentId }) => {
       let returnUrl = "";
       const extraData: { specific: string, note: string } = JSON.parse(Cookies.get("extraOrderData") || "null");
       if( extraData ){
-        returnUrl = `http://localhost:4000/api/payment/success?user=${user.id}&note=${extraData.note}&specific=${extraData.specific}`;
+        returnUrl = `http://localhost:4000/api/payment/success?user=${userId}&note=${extraData.note}&specific=${extraData.specific}`;
       }else {
-        returnUrl = `http://localhost:4000/api/payment/success?user=${user.id}`;
+        returnUrl = `http://localhost:4000/api/payment/success?user=${userId}`;
       }
   
       const { error } = await stripe.confirmPayment({

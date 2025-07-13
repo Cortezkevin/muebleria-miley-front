@@ -2,6 +2,7 @@
 
 import { getOrdersByUser } from "@/api/orderAPI";
 import { AuthContext } from "@/context/auth";
+import { useAuth } from "@/hooks/useAuth";
 import {
   OrderDTO,
   OrderStatus,
@@ -73,19 +74,19 @@ const columns: IOrderTableColumn[] = [
 export default function OrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = React.useState<OrderDTO[]>([]);
-  const { user } = React.useContext(AuthContext);
+  const { userId } = useAuth();
 
   React.useEffect(() => {
-    if (user.id !== "") {
+    if (userId) {
       (async () => {
-        const response = await getOrdersByUser(user.id);
+        const response = await getOrdersByUser(userId);
         if (response?.success) {
           const data = response as SuccessResponseDTO<OrderDTO[]>;
           setOrders(data.content);
         }
       })();
     }
-  }, [user.id]);
+  }, [userId]);
 
   const renderCell = React.useCallback(
     (item: IOrderTableCell, columnKey: keyof IOrderTableCell | "actions") => {
