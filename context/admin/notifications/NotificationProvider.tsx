@@ -7,17 +7,21 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, Messaging, onMessage } from "firebase/messaging";
 import { onBackgroundMessage } from "firebase/messaging/sw";
 import toast from "react-hot-toast";
+import { AuthAPI, NotificationAPI } from "@/api";
+import { NotificationDTO, SuccessResponseDTO } from "@/types";
 
 interface Props {
   children: ReactElement | ReactElement[];
 }
 export interface NotificationState {
-  notifications: string[];
+  notifications: NotificationDTO[];
+  loadingNotifications: boolean;
   count: number;
 }
 
 const Notification_INITIAL_STATE: NotificationState = {
   notifications: [],
+  loadingNotifications: false,
   count: 0
 };
 
@@ -32,13 +36,20 @@ const firebaseConfig = {
 };
 
 export const NotificationProvider: FC<Props> = ({ children }) => {
-  const { isLogged } = useAuth();
+  const { isLogged, userId } = useAuth();
   const [firebaseMessaging, setfirebaseMessaging] = React.useState<Messaging | undefined>(undefined);
   const [state, dispatch] = useReducer(NotificationReducer, Notification_INITIAL_STATE);
   
   React.useEffect(() => {
-    if(!isLogged) return;
+    if(!isLogged) {
+      dispatch({
+        type: "[Notification] - Load Notifications",
+        payload: []
+      });
+      return;
+    };
     initFirebase();
+    loadNotifications();
   }, [isLogged]);
 
   React.useEffect(() => {
@@ -50,10 +61,19 @@ export const NotificationProvider: FC<Props> = ({ children }) => {
   React.useEffect(() => {
     if(!firebaseMessaging) return;
     onMessage(firebaseMessaging, (payload) => {
-      console.log("NOTIFICACION ENTRANTE")
       console.log('Message received. ', payload.notification);
-      if(payload.notification){
-        toast.success(payload.notification.body!);
+      if(payload.data && payload.notification){
+        const extraData = payload.data as { date: string; id: string };
+        dispatch({
+          type: '[Notification] - Add Notification',
+          payload: {
+            body: payload.notification.body!,
+            date: extraData.date,
+            id: extraData.id,
+            title: payload.notification.title!
+          }
+        })
+        toast.success("Nueva notificacion entrante");
       }
     });
   }, [firebaseMessaging]);
@@ -71,11 +91,10 @@ export const NotificationProvider: FC<Props> = ({ children }) => {
           serviceWorkerRegistration: registration
         });
         if(token){
-            console.log("TOKEN IS READY: ", token);
-            // TODO: Send to server
-
+          console.log("TOKEN IS READY: ", token);
+          await AuthAPI.saveDeviceWebToken(userId!, token)
         }else {
-            console.log("No registration token available.")
+          console.log("No registration token available.")
         }
         return;
     }
@@ -84,11 +103,33 @@ export const NotificationProvider: FC<Props> = ({ children }) => {
   const requestPermission = async () => {
     console.log('Requesting permission...');
     Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-            console.log('Notification permission granted.');
-            getDeviceToken();
-        }
+      if (permission === 'granted') {
+          console.log('Notification permission granted.');
+          getDeviceToken();
+      }
     });
+  }
+
+  const loadNotifications = async () => {
+    dispatch({
+      type: "[Notification] - Loading Notifications",
+      payload: true
+    });
+
+    const response = await NotificationAPI.getFromSession();
+    if( response.statusCode === "201" || response.success ){
+      const data = response as SuccessResponseDTO<NotificationDTO[]>;
+      dispatch({
+        type: "[Notification] - Load Notifications",
+        payload: data.content
+      });
+    }else {
+      dispatch({
+        type: "[Notification] - Loading Notifications",
+        payload: false
+      });
+      toast.error(response.message);
+    }
   }
 
   return (

@@ -2,8 +2,9 @@
 import { DataTable, DataTableModalProps } from "@/components/ui/admin/DataTable";
 import { UserModal } from "@/components/ui/admin/UserModal";
 import { AuthContext, StoreContext } from "@/context";
-import { Status } from "@/types";
+import { ResourceStatus, UserStatus } from "@/types";
 import { Chip } from "@heroui/chip";
+import { Image } from "@heroui/image";
 import { Tooltip } from "@heroui/tooltip";
 import React, { useContext } from "react";
 
@@ -11,8 +12,10 @@ export type IUsersTableCell = {
   id: string;
   firstName: string;
   lastName: string;
+  photoUrl: string;
   email: string;
-  status: Status,
+  userStatus: UserStatus,
+  resourceStatus: ResourceStatus,
   roles: string[];
 }
 
@@ -22,6 +25,10 @@ export type IUsersTableColumn = {
 }
 
 const columns: IUsersTableColumn[] = [
+  {
+    key: "photoUrl",
+    title: "Foto"
+  },
   {
     key: "firstName",
     title: "Nombre",
@@ -39,8 +46,12 @@ const columns: IUsersTableColumn[] = [
     title: "Roles",
   },
   {
-    key: "status",
-    title: "Estado"
+    key: "userStatus",
+    title: "Estado del Usuario"
+  },
+  {
+    key: "resourceStatus",
+    title: "Estado General"
   },
   {
     key: "actions",
@@ -50,7 +61,7 @@ const columns: IUsersTableColumn[] = [
 
 export default function UsersPage() {
   const {
-    user: { users },
+    user,
     loadingData,
     loadUsers,
     onSelectUser,
@@ -73,6 +84,12 @@ export default function UsersPage() {
       }
 
       switch (columnKey) {
+        case "photoUrl":
+          return (
+            <div className="flex flex-col">
+              <Image className="object-cover" width={60} height={60} src={cellValue} alt={item.email+"_picture"} />
+            </div>
+          );
         case "firstName":
           return (
             <div className="flex flex-col">
@@ -111,9 +128,13 @@ export default function UsersPage() {
               ))}
             </div>
           );
-        case "status":
+        case "userStatus":
           return (
-            <Chip variant="flat" color={ cellValue as Status === "ACTIVO" ? "success" : "danger" } >{ cellValue }</Chip>
+            <Chip variant="flat" color={ cellValue as UserStatus === "ACTIVO" ? "success" : "danger" } >{ cellValue }</Chip>
+          )
+        case "resourceStatus":
+          return (
+            <Chip variant="flat" color={ cellValue as ResourceStatus === "ACTIVE" ? "success" : "danger" } >{ cellValue }</Chip>
           )
         case "actions":
           return (
@@ -127,6 +148,16 @@ export default function UsersPage() {
                     onClick={() => {
                       onSelectUser(item);
                       modalProps.openModal(true);
+                    }}
+                  ></i>
+                </span>
+              </Tooltip>
+              <Tooltip color="warning" content="Delete">
+                <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                  <i
+                    className="fa-solid fa-trash"
+                    onClick={() => {
+                      alert("Eliminar usuario")
                     }}
                   ></i>
                 </span>
@@ -152,9 +183,9 @@ export default function UsersPage() {
       <h1 className="text-large font-semibold">Usuarios</h1>
       <DataTable
         columns={columns}
-        data={users}
+        data={user.users}
         filterBy={{ key: "firstName", text: "Nombre" }}
-        isLoading={loadingData}
+        isLoading={user.loading}
         emptyMessage="No se encontraron usuarios"
         modal={UserModal}
         renderCell={renderCell}

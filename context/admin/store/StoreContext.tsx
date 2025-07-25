@@ -7,6 +7,7 @@ import {
   CreateProductModal,
   CreateSubCategoryModal,
   CreateUserModal,
+  MinimalUserDTO,
   ProductDTO,
   SubCategoryDTO,
   UpdateCategoryModal,
@@ -33,9 +34,9 @@ export interface StoreProps {
     selected: ProductDTO | null;
   };
   user: {
-    users: UserDTO[];
+    users: MinimalUserDTO[];
     loading: boolean;
-    selected: UserDTO | null;
+    selected: MinimalUserDTO | null;
   };
 
   loadingData: boolean;

@@ -11,19 +11,7 @@ export const siteConfig = {
     {
       label: "Productos",
       href: "/products",
-    },
-    {
-      label: "Categorias",
-      href: "/categories",
-    },
-    {
-      label: "Colecciones",
-      href: "/collection",
-    },
-    {
-      label: "Sobre Nosotros",
-      href: "/about",
-    },
+    }
   ],
   navMenuItems: [
     {
@@ -33,19 +21,7 @@ export const siteConfig = {
     {
       label: "Productos",
       href: "/products",
-    },
-    {
-      label: "Categorias",
-      href: "/categories",
-    },
-    {
-      label: "Colecciones",
-      href: "/collection",
-    },
-    {
-      label: "Sobre Nosotros",
-      href: "/about",
-    },
+    }
   ],
   links: {
     github: "https://github.com/heroui-inc/heroui"

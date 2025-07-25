@@ -19,3 +19,4 @@ export * as MovementsAPI from './movementsAPI';
 export * as PurchaseOrderReceptionAPI from './purchaseOrderReceptionAPI';
 export * as DashboardAPI from './dashboardAPI';
 export * as AuthAPI from './authAPI';
+export * as NotificationAPI from './notificationAPI';

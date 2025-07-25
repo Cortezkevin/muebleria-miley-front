@@ -122,6 +122,7 @@ export const RegisterForm = () => {
         isRequired
         variant='bordered'
         label="Contraseña"
+        type='password'
         onChange={handleChange("password")}
         onBlur={handleBlur("password")}
         value={values.password}
@@ -131,6 +132,7 @@ export const RegisterForm = () => {
       <Input
         isRequired
         variant='bordered'
+        type='password'
         label="Confirmar Contraseña"
         onChange={handleChange("confirmPassword")}
         onBlur={handleBlur("confirmPassword")}

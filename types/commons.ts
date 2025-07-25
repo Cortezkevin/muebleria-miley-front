@@ -19,3 +19,5 @@ export interface IconSvgProps {
     height?: number | string;
     className?: string;
 }
+
+export type ResourceStatus = 'ACTIVE' | 'DELETED';

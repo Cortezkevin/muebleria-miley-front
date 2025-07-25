@@ -12,5 +12,12 @@ export type PersonalDataDTO = {
   firstName: string;
   lastName: string;
   phone: string;
-  birthdate: string;
+  birthdate?: string;
+}
+
+export type NotificationDTO = {
+  id: string;
+  title: string;
+  body: string;
+  date: string;
 }

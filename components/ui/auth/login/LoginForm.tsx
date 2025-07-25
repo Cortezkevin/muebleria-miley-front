@@ -66,6 +66,7 @@ export const LoginForm: FC<Props> = ({ redirectPage }) => {
             label="Contraseña"
             onChange={ handleChange("password")}
             onBlur={ handleBlur("password")}
+            type='password'
             value={ values.password }
             isInvalid={ !!errors.password && touched.password }
             errorMessage={ touched.password && errors.password }

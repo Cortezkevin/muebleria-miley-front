@@ -13,7 +13,7 @@ import React from "react";
 import * as yup from "yup";
 import { Select, SelectItem } from "@heroui/select";
 import { UserAPI } from "@/api";
-import { RoleDTO, Status, SuccessResponseDTO } from "@/types";
+import { RoleDTO, UserStatus, SuccessResponseDTO } from "@/types";
 import { Chip } from "@heroui/react";
 import { StoreContext } from "@/context";
 
@@ -26,7 +26,7 @@ type UserFormInputs = {
   firstName: string;
   lastName: string;
   email: string;
-  status: Status;
+  userStatus: UserStatus;
   roles: string[];
 };
 
@@ -48,7 +48,7 @@ const schema = yup.object().shape({
     .string()
     .email("Ingrese un email valido")
     .required("Campo requerido"),
-  status: yup.string().required("Campo requerido"),
+  userStatus: yup.string().required("Campo requerido"),
   roles: yup
     .array()
     .of(yup.string())
@@ -98,7 +98,7 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
       lastName: "",
       email: "",
       roles: [""],
-      status: "ACTIVO",
+      userStatus: "ACTIVO",
     },
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -113,7 +113,7 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
         lastName: selected ? selected?.lastName : "",
         roles: selected ? selected.roles : [],
         email: selected ? selected.email : "",
-        status: selected ? selected.status : "ACTIVO",
+        userStatus: selected ? selected.userStatus : "ACTIVO",
       },
     });
   }, [selected]);
@@ -127,7 +127,7 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
           lastName: values.lastName,
           email: values.email,
           roles: values.roles,
-          status: values.status,
+          status: values.userStatus,
           userId: selected.id,
         },
         () => {
@@ -143,7 +143,7 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
           lastName: values.lastName,
           email: values.email,
           roles: values.roles,
-          status: values.status,
+          status: values.userStatus,
           password: values.email
         },
         () => {
@@ -239,12 +239,12 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
                 items={ statusArray }
                 label="Estado"
                 variant="bordered"
-                onChange={handleChange("status")}
-                onBlur={handleBlur("status")}
-                value={values.status}
-                isInvalid={!!errors.status && touched.status}
-                errorMessage={touched.status && errors.status}
-                defaultSelectedKeys={selected && ([selected.status] as any)}
+                onChange={handleChange("userStatus")}
+                onBlur={handleBlur("userStatus")}
+                value={values.userStatus}
+                isInvalid={!!errors.userStatus && touched.userStatus}
+                errorMessage={touched.userStatus && errors.userStatus}
+                defaultSelectedKeys={selected && ([selected.userStatus] as any)}
               >
                 {(s) => (
                   <SelectItem key={s.id} textValue={s.value}>

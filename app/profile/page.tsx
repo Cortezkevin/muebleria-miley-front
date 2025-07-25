@@ -86,7 +86,7 @@ export default function ProfilePage() {
         lastName: personal ? personal.lastName : '',
         phone: personal ? personal.phone : '',
         email: email,
-        birthdate: personal ? personal.birthdate : '',
+        birthdate: personal ? (personal.birthdate ? personal.birthdate : '') : '',
         file: undefined,
       },
     });
