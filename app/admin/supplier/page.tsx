@@ -2,6 +2,7 @@
 
 import { DataTable, DataTableModalProps } from "@/components/ui";
 import { SupplierModal } from "@/components/ui/admin/SupplierModal";
+import { RenderersMap } from "@/components/ui/table/TableCell";
 import { AuthContext } from "@/context";
 import { PurchaseContext } from "@/context/admin/purchase";
 import { Tooltip } from "@heroui/react";
@@ -47,6 +48,60 @@ export default function SupplierPage() {
 
   const { supplier: { suppliers }, loadingData, onSelectSupplier } = React.useContext( PurchaseContext );
   const { isAdmin } = React.useContext( AuthContext );
+
+   const userCellRenderers: RenderersMap<ISupplierTableCell> = {
+    name: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.name}</p>
+        </div>
+      )
+    },
+    phone: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.phone}</p>
+        </div>
+      )
+    },
+    ruc: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.ruc}</p>
+        </div>
+      )
+    },
+    address: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.address}</p>
+        </div>
+      )
+    },
+    actions: {
+      render: ({item, modalProps, onSelectCell}) => (
+        <div className="relative flex justify-center items-center gap-2">
+          <Tooltip color="warning" content="Edit">
+            <span className="text-lg text-warning cursor-pointer active:opacity-50">
+              <i className="fa-solid fa-pen-to-square" onClick={() => {
+                onSelectSupplier( item );
+                modalProps.openModal( true );
+              }}></i>
+            </span>
+          </Tooltip>
+          <Tooltip color="danger" content="Delete">
+            <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <i className="fa-solid fa-trash"></i>
+            </span>
+          </Tooltip>
+        </div>
+      ),
+      condition: {
+        predicate: isAdmin,
+        alternateRender: <div>No puedes realizar acciones</div>
+      }
+    }
+   }
 
   const renderCell = React.useCallback(
     (

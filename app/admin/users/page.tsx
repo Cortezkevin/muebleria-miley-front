@@ -1,179 +1,152 @@
 "use client";
 import { DataTable, DataTableModalProps } from "@/components/ui/admin/DataTable";
 import { UserModal } from "@/components/ui/admin/UserModal";
+import { RenderersMap, TableCell } from "@/components/ui/table/TableCell";
 import { AuthContext, StoreContext } from "@/context";
-import { ResourceStatus, UserStatus } from "@/types";
+import { MinimalUserDTO } from "@/types";
+import { TableColumn } from "@/types/ui/table";
 import { Chip } from "@heroui/chip";
 import { Image } from "@heroui/image";
 import { Tooltip } from "@heroui/tooltip";
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 
-export type IUsersTableCell = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  photoUrl: string;
-  email: string;
-  userStatus: UserStatus,
-  resourceStatus: ResourceStatus,
-  roles: string[];
-}
-
-export type IUsersTableColumn = {
-  key: keyof IUsersTableCell | 'actions';
-  title: string;
-}
-
-const columns: IUsersTableColumn[] = [
-  {
-    key: "photoUrl",
-    title: "Foto"
-  },
-  {
-    key: "firstName",
-    title: "Nombre",
-  },
-  {
-    key: "lastName",
-    title: "Apellidos",
-  },
-  {
-    key: "email",
-    title: "Email",
-  },
-  {
-    key: "roles",
-    title: "Roles",
-  },
-  {
-    key: "userStatus",
-    title: "Estado del Usuario"
-  },
-  {
-    key: "resourceStatus",
-    title: "Estado General"
-  },
-  {
-    key: "actions",
-    title: "Acciones",
-  },
+const columns: TableColumn<MinimalUserDTO>[] = [
+  { key: "photoUrl", title: "Foto" },
+  { key: "firstName", title: "Nombre" },
+  { key: "lastName", title: "Apellidos" },
+  { key: "email", title: "Email" },
+  { key: "roles", title: "Roles" },
+  { key: "userStatus", title: "Estado del Usuario" },
+  { key: "resourceStatus", title: "Estado General" },
+  { key: "actions", title: "Acciones" },
 ];
 
 export default function UsersPage() {
   const {
     user,
-    loadingData,
     loadUsers,
     onSelectUser,
   } = React.useContext( StoreContext );
   
   const { isAdmin } = useContext( AuthContext );
-  const renderCell = React.useCallback(
-    (
-      item: IUsersTableCell,
-      columnKey: keyof IUsersTableCell | "actions",
-      modalProps: DataTableModalProps<IUsersTableCell>
-    ) => {
-      let cellValue = "";
-      let roles: string[] = [];
-      if (columnKey === "roles") {
-        roles = item[columnKey];
-      }
-      if (columnKey != "actions" && columnKey != "roles") {
-        cellValue = item[columnKey];
-      }
 
-      switch (columnKey) {
-        case "photoUrl":
-          return (
-            <div className="flex flex-col">
-              <Image className="object-cover" width={60} height={60} src={cellValue} alt={item.email+"_picture"} />
-            </div>
-          );
-        case "firstName":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
-          );
-        case "lastName":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
-          );
-        case "email":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{cellValue}</p>
-            </div>
-          );
-        case "roles":
-          return (
-            <div className="flex gap-2 flex-wrap">
-              {roles.map((r) => (
-                <Chip
-                  key={ r }
-                  variant="flat"
-                  color={
-                    r === "ROLE_USER"
-                      ? "warning"
-                      : r === "ROLE_ADMIN"
-                      ? "danger"
-                      : "secondary"
-                  }
-                >
-                  {r}
-                </Chip>
-              ))}
-            </div>
-          );
-        case "userStatus":
-          return (
-            <Chip variant="flat" color={ cellValue as UserStatus === "ACTIVO" ? "success" : "danger" } >{ cellValue }</Chip>
-          )
-        case "resourceStatus":
-          return (
-            <Chip variant="flat" color={ cellValue as ResourceStatus === "ACTIVE" ? "success" : "danger" } >{ cellValue }</Chip>
-          )
-        case "actions":
-          return (
-            isAdmin
-            ? (
-              <div className="relative flex justify-center items-center gap-2">
-              <Tooltip color="warning" content="Edit">
-                <span className="text-lg text-warning cursor-pointer active:opacity-50">
-                  <i
-                    className="fa-solid fa-pen-to-square"
-                    onClick={() => {
-                      onSelectUser(item);
-                      modalProps.openModal(true);
-                    }}
-                  ></i>
-                </span>
-              </Tooltip>
-              <Tooltip color="warning" content="Delete">
-                <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                  <i
-                    className="fa-solid fa-trash"
-                    onClick={() => {
-                      alert("Eliminar usuario")
-                    }}
-                  ></i>
-                </span>
-              </Tooltip>
-            </div>
-            ) : (
-              <div>No puedes realizar acciones</div>
-            )
-          );
-        default:
-          return <>{cellValue}</>;
-      }
+  const userCellRenderers: RenderersMap<MinimalUserDTO> = {
+    photoUrl: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <Image
+            className="object-cover"
+            width={60}
+            height={60}
+            src={item.photoUrl}
+            alt={`${item.email}_picture`}
+          />
+        </div>
+      ),
     },
-    [ isAdmin ]
-  );
+    firstName: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.firstName}</p>
+        </div>
+      ),
+    },
+    lastName: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.lastName}</p>
+        </div>
+      ),
+    },
+    email: {
+      render: ({ item }) => (
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">{item.email}</p>
+        </div>
+      ),
+    },
+    roles: {
+      render: ({ item }) => (
+        <div className="flex gap-2 flex-wrap">
+          {item.roles.map((r) => (
+            <Chip
+              key={r}
+              variant="flat"
+              color={
+                r === "ROLE_USER" ? "warning" : r === "ROLE_ADMIN" ? "danger" : "secondary"
+              }
+            >
+              {r}
+            </Chip>
+          ))}
+        </div>
+      ),
+    },
+    userStatus: {
+      render: ({ item }) => (
+        <Chip
+          variant="flat"
+          color={item.userStatus === "ACTIVO" ? "success" : "danger"}
+        >
+          {item.userStatus}
+        </Chip>
+      ),
+    },
+    resourceStatus: {
+      render: ({ item }) => (
+        <Chip
+          variant="flat"
+          color={item.resourceStatus === "ACTIVE" ? "success" : "danger"}
+        >
+          {item.resourceStatus}
+        </Chip>
+      ),
+    },
+    actions: {
+      render: ({ item, onSelectCell, modalProps }) => (
+        <div className="relative flex justify-center items-center gap-2">
+          <Tooltip color="warning" content="Edit">
+            <span
+              className="text-lg text-warning cursor-pointer active:opacity-50"
+              onClick={() => {
+                onSelectCell(item);
+                modalProps.openModal(true);
+              }}
+            >
+              <i className="fa-solid fa-pen-to-square" />
+            </span>
+          </Tooltip>
+          <Tooltip color="warning" content="Delete">
+            <span
+              className="text-lg text-danger cursor-pointer active:opacity-50"
+              onClick={() => {
+                alert("Eliminar usuario");
+              }}
+            >
+              <i className="fa-solid fa-trash" />
+            </span>
+          </Tooltip>
+        </div>
+      ),
+      condition: {
+        predicate: isAdmin,
+        alternateRender: <div>No puedes realizar acciones</div>,
+      },
+    },
+  };
 
+  const renderCell = useCallback(
+  (item: MinimalUserDTO, columnKey: keyof MinimalUserDTO | "actions", modalProps: DataTableModalProps<MinimalUserDTO>) => (
+    <TableCell
+      item={item}
+      columnKey={columnKey}
+      modalProps={modalProps}
+      onSelectCell={onSelectUser}
+      renderers={userCellRenderers}
+    />
+  ),
+  [onSelectUser, userCellRenderers]
+);
   React.useEffect(() => {
     loadUsers();
   }, [])
