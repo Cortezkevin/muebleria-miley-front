@@ -26,7 +26,6 @@ type UserFormInputs = {
   firstName: string;
   lastName: string;
   email: string;
-  userStatus: UserStatus;
   roles: string[];
 };
 
@@ -48,7 +47,6 @@ const schema = yup.object().shape({
     .string()
     .email("Ingrese un email valido")
     .required("Campo requerido"),
-  userStatus: yup.string().required("Campo requerido"),
   roles: yup
     .array()
     .of(yup.string())
@@ -97,8 +95,7 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
       firstName: "",
       lastName: "",
       email: "",
-      roles: [""],
-      userStatus: "ACTIVO",
+      roles: [""]
     },
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
@@ -112,8 +109,7 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
         firstName: selected ? selected?.firstName : "",
         lastName: selected ? selected?.lastName : "",
         roles: selected ? selected.roles : [],
-        email: selected ? selected.email : "",
-        userStatus: selected ? selected.userStatus : "ACTIVO",
+        email: selected ? selected.email : ""
       },
     });
   }, [selected]);
@@ -127,7 +123,6 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
           lastName: values.lastName,
           email: values.email,
           roles: values.roles,
-          status: values.userStatus,
           userId: selected.id,
         },
         () => {
@@ -143,7 +138,6 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
           lastName: values.lastName,
           email: values.email,
           roles: values.roles,
-          status: values.userStatus,
           password: values.email
         },
         () => {
@@ -233,29 +227,6 @@ export function UserModal({ handleOpenModal, isOpen }: Props) {
                     </Chip>
                   </SelectItem>
                 ))}
-              </Select>
-              <Select
-                isRequired
-                items={ statusArray }
-                label="Estado"
-                variant="bordered"
-                onChange={handleChange("userStatus")}
-                onBlur={handleBlur("userStatus")}
-                value={values.userStatus}
-                isInvalid={!!errors.userStatus && touched.userStatus}
-                errorMessage={touched.userStatus && errors.userStatus}
-                defaultSelectedKeys={selected && ([selected.userStatus] as any)}
-              >
-                {(s) => (
-                  <SelectItem key={s.id} textValue={s.value}>
-                    <Chip
-                      variant="flat"
-                      color={s.value === "ACTIVO" ? "success" : "danger"}
-                    >
-                      {s.value}
-                    </Chip>
-                  </SelectItem>
-                )}
               </Select>
             </ModalBody>
             <ModalFooter>

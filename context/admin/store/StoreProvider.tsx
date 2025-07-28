@@ -16,13 +16,13 @@ import {
   UserDTO,
   CreateUserModal,
   UpdateUserModal,
+  MinimalUserDTO,
 } from "@/types";
 import { CategoryAPI, ProductAPI, SubCategoryAPI, UserAPI } from "@/api";
 import toast from "react-hot-toast";
 import { CreateCategoryModal, UpdateCategoryModal } from "@/types/admin/category";
 import { CreateSubCategoryModal, UpdateSubCategoryModal } from "@/types/admin/subcategory";
 import { CreateProductModal } from "@/types/admin/product";
-import { IUsersTableCell } from "@/app/admin/users/page";
 import { useAuth } from "@/hooks/useAuth";
 //import { IUsersTableCell } from "@/declarations/table/users";
 
@@ -47,9 +47,9 @@ export interface StoreState {
     selected: ProductDTO | null;
   };
   user: {
-    users: UserDTO[];
+    users: MinimalUserDTO[];
     loading: boolean;
-    selected: UserDTO | null;
+    selected: MinimalUserDTO | null;
   };
   loadingData: boolean;
 }
@@ -157,7 +157,7 @@ export function StoreProvider ({ children }: Props) {
     });
   };
 
-  const onSelectUser = (user: IUsersTableCell | null) => {
+  const onSelectUser = (user: MinimalUserDTO | null) => {
     dispatch({
       type: "[Store] - Select User",
       payload: user,

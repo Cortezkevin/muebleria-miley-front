@@ -1,6 +1,4 @@
 "use client";
-
-import { IUsersTableCell } from "@/app/admin/users/page";
 import {
   CategoryDTO,
   CreateCategoryModal,
@@ -46,7 +44,7 @@ export interface StoreProps {
   onSelectCategory: (category: CategoryDTO | null) => void;
   onSelectSubCategory: (subCategory: SubCategoryDTO | null) => void;
   onSelectProduct: (product: ProductDTO | null) => void;
-  onSelectUser: (user: IUsersTableCell | null) => void;
+  onSelectUser: (user: MinimalUserDTO | null) => void;
 
   onCreateOrEditCategory: (
     type: "Edit" | "Create",

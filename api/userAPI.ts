@@ -57,3 +57,39 @@ export const updateProfile = async (user: UpdateProfileDTO): Promise<SuccessResp
     return handleAPIError(e);
   }
 }
+
+export const deleteUser = async (id: string): Promise<SuccessResponseDTO<any> | ErrorResponseDTO> => {
+  try {
+    const response = await AxiosInstance.patch<SuccessResponseDTO<any>>(PATH+"/delete/"+id);
+    return response.data;
+  } catch (e) {
+    return handleAPIError(e);
+  }
+}
+
+export const restoreUser = async (id: string): Promise<SuccessResponseDTO<any> | ErrorResponseDTO> => {
+  try {
+    const response = await AxiosInstance.patch<SuccessResponseDTO<any>>(PATH+"/restore/"+id);
+    return response.data;
+  } catch (e) {
+    return handleAPIError(e);
+  }
+}
+
+export const enableUser = async (id: string): Promise<SuccessResponseDTO<any> | ErrorResponseDTO> => {
+  try {
+    const response = await AxiosInstance.patch<SuccessResponseDTO<any>>(PATH+"/enable/"+id);
+    return response.data;
+  } catch (e) {
+    return handleAPIError(e);
+  }
+}
+
+export const disableUser = async (id: string): Promise<SuccessResponseDTO<any> | ErrorResponseDTO> => {
+  try {
+    const response = await AxiosInstance.patch<SuccessResponseDTO<any>>(PATH+"/disable/"+id);
+    return response.data;
+  } catch (e) {
+    return handleAPIError(e);
+  }
+}

@@ -1,11 +1,8 @@
-import { Status } from "../auth";
-
 export type CreateUserModal = {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
-    status: Status;
     roles: string[];
 }
 
@@ -19,6 +16,5 @@ export type UpdateUserModal = {
     firstName: string;
     lastName: string;
     email: string;
-    status: Status;
     roles: string[];
 }
