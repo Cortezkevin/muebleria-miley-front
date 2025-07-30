@@ -1,7 +1,7 @@
 "use client";
 import { UserAPI } from "@/api";
+import { ConfirmActionModal } from "@/components/ui/admin/ConfirmActionModal";
 import { DataTable, DataTableModalProps } from "@/components/ui/admin/DataTable";
-import { LogicalDeleteModal } from "@/components/ui/admin/LogicalDeleteModal";
 import { UserActions } from "@/components/ui/admin/UserActions";
 import { UserModal } from "@/components/ui/admin/UserModal";
 import { RenderersMap, TableCell } from "@/components/ui/table/TableCell";
@@ -33,7 +33,9 @@ export default function UsersPage() {
   } = React.useContext( StoreContext );
   
   const { isAdmin } = useContext( AuthContext );
+
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [disableModalOpen, setDisableModalOpen] = useState(false);
 
   const userCellRenderers: RenderersMap<MinimalUserDTO> = {
     photoUrl: {
@@ -109,18 +111,16 @@ export default function UsersPage() {
     },
     actions: {
       render: ({ item, onSelectCell, modalProps }) => (
-        <UserActions 
+        <UserActions
+          onOpen={ () => {
+            onSelectCell(item)
+          }}
+          onClose={ () => onSelectUser(null) }
           isDeleted={ item.resourceStatus === 'DELETED' }
           isEnabled={ item.userStatus === 'ACTIVO' }
-          onClickDelete={ () => {
-            onSelectCell(item);
-            setDeleteModalOpen(true);
-          }}
-          onClickDisable={ () => {} }
-          onClickEdit={ () => { 
-            onSelectCell(item);
-            modalProps.openModal(true);
-          } }
+          onClickDelete={ () => setDeleteModalOpen(true) }
+          onClickDisable={ () => setDisableModalOpen(true) }
+          onClickEdit={ () => modalProps.openModal(true) }
           onClickEnable={ () => handleEnableAction(item.id) }
           onClickRestore={ () => handleRestoreAction(item.id) }
         />
@@ -159,6 +159,11 @@ export default function UsersPage() {
     loadUsers();
   }
 
+  const handleSuccessDisable = () => {
+    setDisableModalOpen(false);
+    loadUsers();
+  }
+
   const renderCell = useCallback(
   (item: MinimalUserDTO, columnKey: keyof MinimalUserDTO | "actions", modalProps: DataTableModalProps<MinimalUserDTO>) => (
       <TableCell
@@ -189,59 +194,40 @@ export default function UsersPage() {
       {
         user.selected
         && (
-          <LogicalDeleteModal 
-            confirmationText={user.selected.firstName}
-            handleOpenModal={(isOpen) => setDeleteModalOpen(isOpen)}
-            idToDelete={user.selected.id}
-            isOpen={deleteModalOpen}
-            onSuccessDelete={handleSuccessDelete}
-          />
+          <>
+            <ConfirmActionModal 
+              title="⚠️ Eliminar Usuario"
+              resourceName="usuario"
+              confirmationText={user.selected.firstName}
+              action="dar de baja"
+              onOpenModal={(isOpen) => setDeleteModalOpen(isOpen)}
+              isOpen={deleteModalOpen}
+              onConfirmAction={async () => {
+                if(!user.selected) return false;
+                const {message, success} = await UserAPI.deleteUser(user.selected.id);
+                success ? toast.success(message) : toast.error(message);
+                return success;
+              }}
+              onSuccessAction={handleSuccessDelete}
+            />
+            <ConfirmActionModal 
+              title="⚠️ Deshabilitar Usuario"
+              resourceName="usuario"
+              confirmationText={user.selected.firstName}
+              action="deshabilitar"
+              onOpenModal={(isOpen) => setDisableModalOpen(isOpen)}
+              isOpen={disableModalOpen}
+              onConfirmAction={async () => {
+                if(!user.selected) return false;
+                const {message, success} = await UserAPI.disableUser(user.selected.id);
+                success ? toast.success(message) : toast.error(message);
+                return success;
+              }}
+              onSuccessAction={handleSuccessDisable}
+            />
+          </>
         )
       }
     </div>
   );
 }
-
-
-        {/* <div className="relative flex justify-center items-center gap-2">
-          <Tooltip color="warning" content="Edit">
-            <span
-              className="text-lg text-warning cursor-pointer active:opacity-50"
-              onClick={() => {
-                onSelectCell(item);
-                modalProps.openModal(true);
-              }}
-            >
-              <i className="fa-solid fa-pen-to-square" />
-            </span>
-          </Tooltip>
-          {
-            item.resourceStatus == "ACTIVE"
-            ? (
-              <Tooltip color="danger" content="Delete">
-                <span
-                  className="text-lg text-danger cursor-pointer active:opacity-50"
-                  onClick={() => {
-                    onSelectCell(item);
-                    setDeleteModalOpen(true);
-                  }}
-                >
-                  <i className="fa-solid fa-trash" />
-                </span>
-              </Tooltip>
-            )
-            : (
-              <Tooltip color="primary" content="Restore">
-                <span
-                  className="text-lg text-primary cursor-pointer active:opacity-50"
-                  onClick={() => {
-                    onSelectCell(item);
-                    setDeleteModalOpen(true);
-                  }}
-                >
-                  <i className="fa-solid fa-trash-arrow-up"></i>
-                </span>
-              </Tooltip>
-            )
-          }
-        </div> */}

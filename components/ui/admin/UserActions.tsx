@@ -4,6 +4,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover'
 import React, { FC } from 'react'
 
 type Props = {
+  onOpen: () => void;
+  onClose: () => void;
   isDeleted: boolean;
   isEnabled: boolean;
   onClickEdit: () => void;
@@ -16,6 +18,8 @@ type Props = {
 export const UserActions: FC<Props> = ({
   isDeleted,
   isEnabled,
+  onOpen,
+  onClose,
   onClickDelete,
   onClickDisable,
   onClickEdit,
@@ -23,9 +27,9 @@ export const UserActions: FC<Props> = ({
   onClickRestore
 }) => {
   return (
-    <Popover placement="bottom" showArrow={true} backdrop='opaque'>
+    <Popover placement="bottom" showArrow={true} backdrop='opaque' onOpenChange={isOpen => isOpen && onOpen()}>
       <PopoverTrigger>
-        <Button>Actions</Button>
+        <Button /* onPress={onOpen} */>Actions</Button>
       </PopoverTrigger>
       <PopoverContent>
         <Listbox aria-label="Listbox menu with icons" variant="faded">

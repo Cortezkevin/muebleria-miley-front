@@ -1,49 +1,55 @@
 
-import { PaymentAPI, UserAPI } from '@/api';
-import { SuccessResponseDTO } from '@/types';
 import { Button } from '@heroui/button';
 import { Input } from '@heroui/input';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
-import { Chip } from '@heroui/react';
 import React, { FC } from 'react'
-import toast from 'react-hot-toast';
 
 type Props = {
-  idToDelete: string;
+  title: string;
+  resourceName: string;
+  action: string;
   isOpen: boolean;
   confirmationText: string;
-  handleOpenModal: ( isOpen: boolean ) => void;
-  onSuccessDelete: () => void;
+  onOpenModal: ( isOpen: boolean ) => void;
+  onConfirmAction: () => Promise<boolean>;
+  onSuccessAction: () => void;
 }
 
-export const LogicalDeleteModal: FC<Props> = ({ idToDelete, isOpen, handleOpenModal, confirmationText, onSuccessDelete }) => {
-
+export const ConfirmActionModal: FC<Props> = ({ 
+  title, 
+  resourceName, 
+  action, 
+  isOpen, 
+  onOpenModal, 
+  onConfirmAction,
+  confirmationText, 
+  onSuccessAction 
+}) => {
   const [confirmText, setConfirmText] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDeleteAction = async () => {
     setIsLoading(true);
-    const res = await UserAPI.deleteUser(idToDelete);
-    if(res.success){
-        const data = res as SuccessResponseDTO<any>;
-        toast.success(data.message);
-        onSuccessDelete();
-        return;
+    const isSuccess = await onConfirmAction();
+    if(isSuccess){
+      onSuccessAction();
+      setConfirmText("");
+      setIsLoading(false);
+      return;
     }
-    toast.error(res.message);
     setIsLoading(false);
   }
 
   return (
-    <Modal isOpen={isOpen} size='xl' className='z-[200]' placement="center" onOpenChange={ handleOpenModal }>
+    <Modal isOpen={isOpen} size='xl' className='z-[200]' placement="center" onOpenChange={ onOpenModal }>
       <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              ⚠️ Eliminación Logica del Recurso
+              { title }
             </ModalHeader>
             <ModalBody>
-                <h3>¿Estás seguro de que deseas dar de baja al recurso <Chip color='danger'>{confirmationText}</Chip>?</h3>
+                <h3>¿Estás seguro de que deseas { action } al { resourceName } <b className='text-danger-500'>{ confirmationText }</b>?</h3>
                 <Input 
                     value={confirmText}
                     onChange={e => setConfirmText(e.target.value)}
@@ -59,9 +65,10 @@ export const LogicalDeleteModal: FC<Props> = ({ idToDelete, isOpen, handleOpenMo
               </Button>
               <Button
                 color="danger"
+                variant='flat'
                 className=" text-white"
                 isDisabled={confirmText !== confirmationText}
-                onPress={handleConfirmDelete}
+                onPress={handleConfirmDeleteAction}
                 isLoading={isLoading}
               >
                 Confirmar
